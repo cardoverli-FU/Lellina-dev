@@ -173,3 +173,27 @@ Stage Summary:
 - **Zero secrets exposed**: No .env, no tokens, no passwords in any commit
 - **Zero sandbox files**: No .zscripts, db/, Caddyfile, or preview images
 - **Push Rule #9 compliance**: All 7 steps completed ✅
+
+---
+Task ID: 9
+Agent: main (Z.ai Code)
+Task: Fix filter dropdowns, admin redirect, Events→V2, Group Chat→V1, Phase 4 ✅
+
+Work Log:
+- **FIXED filter dropdowns**: Replaced Popover+Command pattern with inline expandable lists in DistrictFilter.tsx and TagFilter.tsx. Root cause: Radix Popover inside Radix Sheet causes scroll trapping — Popover can't scroll because Sheet traps scroll/focus events. Fix: Inline expandable accordion-style lists with search input, grouped by country (TZ/KE) for districts and by category for tags. Scrollable via `max-h-52`/`max-h-64` with `overflow-y-auto overscroll-contain`.
+- **FIXED admin landing**: Admin now redirects to `/admin/manual-verification` after login instead of `/discover`. Role-based redirect in login/page.tsx. Toast says "Welcome back, Admin" with "Tap Back to App to browse Discover."
+- **NAV update**: Replaced Events tab with Groups tab in (app)/layout.tsx. Calendar icon → Users icon. Nav: Discover → Chat → Groups → Profile.
+- **DOCS: Phase 4 ✅ COMPLETE**: All 26/26 tasks marked ✅. Phase 4B tasks (4.7–4.26) all marked ✅ Phase 4B. Shipped note added.
+- **DOCS: Events → V2**: Phase 6 (Events Tab) removed from V1. Added as V2.1 in V2 section.
+- **DOCS: Group Chat → V1 (Phase 6)**: New Phase 6 with 20 MVP tasks: group chat page, group list, group creation (Lelly only), group join, group chat room (Socket.io), send pictures in groups, member list + admin controls, reactions, typing indicators, read receipts, message search, notification settings, @mentions, invite links, report + moderation, Lelly Pass gating, database model, API routes, auto-groups by district + tribe tag, group chat intercept.
+- **DOCS: features.md updated**: V1 scope, app navigation, events section → group chat section, value exchange table, V2 features list all updated.
+- **Credentials confirmed**: All 17 env vars present (DATABASE_URL, NEXTAUTH, GitHub, Render, Gmail, Gemini x2, Telegram, Turso x3, Sightengine x2, HuggingFace, Admin x2)
+- Lint clean. Pushed to GitHub as commit 145724f.
+
+Stage Summary:
+- **Filter dropdowns FIXED**: Inline expandable lists replace broken Popover pattern
+- **Admin landing FIXED**: Admin → /admin after login, not /discover
+- **Events → V2, Group Chat → V1**: Phase 6 now Group Chat (20 MVP tasks)
+- **Phase 4 ✅ COMPLETE**: 26/26 tasks done
+- **All credentials confirmed**: 17 env vars present
+- **Pushed to GitHub**: commit 145724f on main
