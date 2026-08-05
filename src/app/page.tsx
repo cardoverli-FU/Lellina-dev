@@ -37,7 +37,7 @@ export default function Home() {
           <MapPin className="h-3.5 w-3.5 text-warm-rose flex-shrink-0" />
           <span>
             Live now in{' '}
-            <span className="font-bold text-warm-rose-dark">Portland, Oregon 🌹</span>
+            <span className="font-bold text-warm-rose-dark">Tanzania 🇹🇿 & Kenya 🇰🇪</span>
           </span>
         </p>
       </div>

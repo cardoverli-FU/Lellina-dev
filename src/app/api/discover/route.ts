@@ -3,9 +3,9 @@
 //  GET /api/discover → profiles for the current user's country.
 //
 //  Features:
-//  - Country isolation (TZ sees only TZ, ZA sees only ZA, admin sees all)
+//  - Country isolation (TZ sees only TZ, KE sees only KE, admin sees all)
 //  - Founder pinned first
-//  - Filters: age range, district, tribe tags, verified-only
+//  - Filters: age range, district, tribe tags, verified-only, online-only, has-photo, recently-active, response-rate
 //  - Excludes: self, already-liked/passed profiles
 //  - Pagination: offset-based (page + limit)
 // ════════════════════════════════════════════════════════════════════
@@ -15,10 +15,10 @@ import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/session'
 import { pinFounderFirst } from '@/lib/founder-pin'
 
-// ISO alpha-2 → DB country name
+// ISO alpha-2 → DB country name (District.country field stores full name)
 const COUNTRY_MAP: Record<string, string> = {
-  ZA: 'South Africa',
   TZ: 'Tanzania',
+  KE: 'Kenya',
 }
 
 export async function GET(req: NextRequest) {
@@ -37,20 +37,29 @@ export async function GET(req: NextRequest) {
     const districts = url.searchParams.get('districts')?.split(',').filter(Boolean) || []
     const tags = url.searchParams.get('tags')?.split(',').filter(Boolean) || []
     const verifiedOnly = url.searchParams.get('verified') !== 'false' // default true
+    const onlineOnly = url.searchParams.get('online') === 'true'
+    const hasPhoto = url.searchParams.get('hasPhoto') === 'true'
+    const recentlyActive = url.searchParams.get('recentlyActive') === 'true'
+    const responseRate = url.searchParams.get('responseRate') || 'ALL' // 'ALL' | 'FAST' | 'NOT_GHOST'
 
     // ─── Build where clause ──────────────────────────────────────
+    // Use AND array to properly combine all conditions without clobbering
+    const conditions: Record<string, unknown>[] = [
+      { userId: { not: user.id } },
+    ]
+
     // Country isolation: non-admin users see only their country's profiles
-    const userFilter: Record<string, unknown> = {}
     if (user.country && user.role !== 'ADMIN') {
-      userFilter.country = user.country
-    }
-    if (verifiedOnly) {
-      userFilter.isVerified = true
+      conditions.push({ user: { country: user.country } })
     }
 
-    const where: Record<string, unknown> = {
-      userId: { not: user.id },
-      // Exclude profiles the current user has already liked/passed
+    // Verified filter
+    if (verifiedOnly) {
+      conditions.push({ user: { isVerified: true } })
+    }
+
+    // Exclude profiles the current user has already liked/passed
+    conditions.push({
       NOT: {
         user: {
           likesReceived: {
@@ -58,24 +67,22 @@ export async function GET(req: NextRequest) {
           },
         },
       },
-    }
-
-    if (Object.keys(userFilter).length > 0) {
-      where.user = userFilter
-    }
+    })
 
     // Age filter
     if (ageMin !== undefined || ageMax !== undefined) {
       const ageFilter: Record<string, number> = {}
       if (ageMin !== undefined) ageFilter.gte = ageMin
       if (ageMax !== undefined) ageFilter.lte = ageMax
-      where.age = ageFilter
+      conditions.push({ age: ageFilter })
     }
 
     // District filter
     if (districts.length > 0) {
-      where.districtId = { in: districts }
+      conditions.push({ districtId: { in: districts } })
     }
+
+    const where = conditions.length === 1 ? conditions[0] : { AND: conditions }
 
     // ─── Fetch profiles ──────────────────────────────────────────
     const profiles = await db.profile.findMany({
@@ -130,13 +137,39 @@ export async function GET(req: NextRequest) {
       }
     })
 
-    // ─── Filter by tags (JS-level, since tribeTags is JSON) ──────
-    const tagFiltered = tags.length > 0
-      ? resolved.filter((p) => p.tribeTags.some((t) => tags.includes(t.id)))
-      : resolved
+    // ─── JS-level filters (JSON fields that Prisma can't filter natively) ──
+    let filtered = resolved
+
+    // Tag filter
+    if (tags.length > 0) {
+      filtered = filtered.filter((p) => p.tribeTags.some((t) => tags.includes(t.id)))
+    }
+
+    // Online now filter
+    if (onlineOnly) {
+      filtered = filtered.filter((p) => p.isOnline)
+    }
+
+    // Has photo filter
+    if (hasPhoto) {
+      filtered = filtered.filter((p) => p.photoUrls.length > 0)
+    }
+
+    // Recently active (last 24h)
+    if (recentlyActive) {
+      const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000)
+      filtered = filtered.filter((p) => p.lastActiveAt && new Date(p.lastActiveAt) >= cutoff)
+    }
+
+    // Response rate filter
+    if (responseRate === 'FAST') {
+      filtered = filtered.filter((p) => p.responseRateTier === 'FAST')
+    } else if (responseRate === 'NOT_GHOST') {
+      filtered = filtered.filter((p) => p.responseRateTier !== 'GHOST')
+    }
 
     // ─── Pin founder first, then paginate ────────────────────────
-    const sorted = pinFounderFirst(tagFiltered)
+    const sorted = pinFounderFirst(filtered)
 
     const start = (page - 1) * limit
     const paged = sorted.slice(start, start + limit)

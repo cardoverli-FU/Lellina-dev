@@ -82,7 +82,7 @@
 ### [Phase 1] - Long scroll UX hurt conversion + cognitive load
 - **Date:** 2026-07-30
 - **Error:** Original landing was a single long-scroll page with 9 stacked sections (~6700px tall on desktop). Vision agent + UX review flagged: visitors had to scroll past 8 sections to reach pricing/FAQ, drop-off was high, mobile users especially bounced before reaching the Lelly Pass offer. The "How You Pay" and "Lelly Pass Info" sections were buried at the bottom.
-- **Fix:** Converted the long-scroll page to a **tabbed interface** (`LandingTabs.tsx`) with 6 pill tabs under a sticky header: Home / Why / Gate / Cape Town / Galz / Lelly. Pricing + FAQ now live in the "Lelly" tab — one tap away from any context. Added a `BrandSplash.tsx` intro (deep rose, ~1.8s fade) for premium first impression. Mobile users can now jump straight to pricing without scrolling.
+- **Fix:** Converted the long-scroll page to a **tabbed interface** (`LandingTabs.tsx`) with 6 pill tabs under a sticky header: Home / Why / Gate / Galz / Lelly (later updated for Tanzania & Kenya pivot). Pricing + FAQ now live in the "Lelly" tab — one tap away from any context. Added a `BrandSplash.tsx` intro (deep rose, ~1.8s fade) for premium first impression. Mobile users can now jump straight to pricing without scrolling.
 - **File:** `src/components/landing/LandingTabs.tsx` (new), `src/components/landing/BrandSplash.tsx` (new), `src/app/page.tsx` (recomposed)
 
 ---
@@ -114,7 +114,7 @@
 **Fix applied (commit f335a2b):**
 1. Changed all `'hsl(var(--x))'` to `'var(--x)'` in `tailwind.config.ts` (15+ color tokens).
 2. Added missing `--destructive-foreground` token to `globals.css` (+ `@theme inline` mapping).
-3. Fixed landing region banner: now shows 🇿🇦 Cape Town + 🇹🇿 Dar es Salaam with dark text (`text-soft-charcoal`, `text-warm-rose-dark`) on `blush-subtle` bg.
+3. Fixed landing region banner: now shows 🇹🇿 Tanzania + 🇰🇪 Kenya with dark text (`text-soft-charcoal`, `text-warm-rose-dark`) on `blush-subtle` bg. (Previously showed 🇿🇦 Cape Town + 🇹🇿 Dar es Salaam before the Tanzania & Kenya pivot.)
 4. Fixed FilterPanel Sheet close X: added `text-cream` to SheetContent (X was inheriting broken `text-foreground` = invisible on dark).
 5. Fixed ProfileCard pass button: `text-cream/60` → `text-cream`, `border-cream/15` → `border-cream/25` (stronger contrast).
 6. Fixed 3 undefined color classes: `text-espresso` → `text-soft-charcoal`, `text-sage-deep` → `text-sage`, `text-sage-dark` → `text-sage`.

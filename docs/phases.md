@@ -1,12 +1,12 @@
 # Lellina — V1 Build Phases
 
-> **Galz for Galz** | Portland, Oregon, USA 🌹  
+> **Galz for Galz** | Tanzania 🇹🇿 & Kenya 🇰🇪  
 > Solo dev + AI | Web app first → APK later  
 > This document tracks all V1 build phases and task breakdowns. For agent activity logs, see `worklog.md` at project root.
 >
 > **Anti-Ghosting Policy:** Lellina is for ACTIVE users, not ghosts. We publicly show response rate badges ("Replies within 24h" / "Often takes a while" / "Ghost risk 🚩"), let users filter out ghost risks, and give easy "Not Feeling It" exit buttons. Ghosts get flagged after 7 days and deprioritized in Discover. This is a CORE selling point — visible on the landing page.
 >
-> **Launch region:** Portland, Oregon (USA) only. Other regions (Tanzania + South Africa) show "Coming soon" on `/join`. More regions will be added later. The code is generic — only seed data changed in the pivot.
+> **Launch region:** Tanzania & Kenya only. Other regions show "Coming soon" on `/join`. More regions will be added later. The code is generic — only seed data changed in the pivot.
 
 ---
 
@@ -53,21 +53,96 @@
 |-------|-------|
 | **App Name** | Lellina |
 | **Tagline** | Galz for Galz |
-| **Launch Markets** | Portland, Oregon (USA) — V1. Tanzania + South Africa are Coming soon (code is generic, only seed data changed) |
+| **Launch Markets** | Tanzania & Kenya — V1. Other regions are Coming soon (code is generic, only seed data changed) |
 | **Team** | Solo dev + AI |
 | **Platform** | Web app first (Next.js) → APK via CapacitorJS later |
 | **Distribution** | No Play Store — direct web + APK |
 | **Payment** | LAST phase in V1. Gateway TBD (Lemon Squeezy, PayFast, or in-app) |
 | **V1 Scope** | No group chat. No Play Store. |
 
-### Portland Quadrants (6) — Oregon, USA
+### Tanzania Regions (31)
 
-1. Northwest Portland (Pearl District, Nob Hill, Northwest)
-2. Southwest Portland (Downtown, Goose Hollow, Hillsdale)
-3. Northeast Portland (Alberta Arts, Irvington, Hollywood)
-4. Southeast Portland (Hawthorne, Richmond, Mt Tabor)
-5. North Portland (Kenton, St Johns, Mississippi)
-6. South Portland (Sellwood, Eastmoreland, Brooklyn)
+1. Arusha
+2. Dar es Salaam
+3. Dodoma
+4. Geita
+5. Iringa
+6. Kagera
+7. Kaskazini Pemba
+8. Kaskazini Unguja
+9. Katavi
+10. Kigoma
+11. Kilimanjaro
+12. Kusini Pemba
+13. Kusini Unguja
+14. Lindi
+15. Manyara
+16. Mara
+17. Mbeya
+18. Mjini Magharibi
+19. Morogoro
+20. Mtwara
+21. Mwanza
+22. Njombe
+23. Pwani
+24. Rukwa
+25. Ruvuma
+26. Shinyanga
+27. Simiyu
+28. Singida
+29. Songwe
+30. Tabora
+31. Tanga
+
+### Kenya Counties (47)
+
+1. Baringo
+2. Bomet
+3. Bungoma
+4. Busia
+5. Elgeyo-Marakwet
+6. Embu
+7. Garissa
+8. Homa Bay
+9. Isiolo
+10. Kajiado
+11. Kakamega
+12. Kericho
+13. Kiambu
+14. Kilifi
+15. Kirinyaga
+16. Kisii
+17. Kisumu
+18. Kitui
+19. Kwale
+20. Laikipia
+21. Lamu
+22. Machakos
+23. Makueni
+24. Mandera
+25. Marsabit
+26. Meru
+27. Migori
+28. Mombasa
+29. Murang'a
+30. Nairobi
+31. Nakuru
+32. Nandi
+33. Narok
+34. Nyamira
+35. Nyandarua
+36. Nyeri
+37. Samburu
+38. Siaya
+39. Taita-Taveta
+40. Tana River
+41. Tharaka-Nithi
+42. Trans-Nzoia
+43. Turkana
+44. Uasin Gishu
+45. Vihiga
+46. Wajir
+47. West Pokot
 
 ### Lelly Pass Pricing
 
@@ -120,15 +195,15 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 **Goal:** A high-converting landing page that makes every visitor want to secure their Founding Lelly Pass. Zero tech exposure. Immediate sign-up.
 
 > **✅ PHASE 1 SHIPPED** — Browser-verified, lint-clean, pushed to GitHub (`cardoverli-FU/lellina-dev`).
-> Tabbed layout (6 tabs) replaces long-scroll. Premium Fraunces + Inter fonts. 4-color palette (Deep Rose / Gold / Ivory / Espresso). USD pricing with live ZAR via Frankfurter.app. Contrast Rule enforced. No waitlist — community signups route to Telegram + WhatsApp groups.
+> Tabbed layout (6 tabs) replaces long-scroll. Premium Fraunces + Inter fonts. 4-color palette (Deep Rose / Gold / Ivory / Espresso). USD pricing with live TZS/KES via Frankfurter.app. Contrast Rule enforced. No waitlist — community signups route to Telegram + WhatsApp groups.
 
 | # | Task | Status | File Route |
 |---|------|--------|------------|
-| 1.1 | Hero section — "Lellina", "Galz for Galz", Cape Town, South Africa | ✅ | `src/components/landing/Hero.tsx` → composed in `src/app/page.tsx` |
+| 1.1 | Hero section — "Lellina", "Galz for Galz", Tanzania & Kenya | ✅ | `src/components/landing/Hero.tsx` → composed in `src/app/page.tsx` |
 | 1.2 | Founding Lelly Pass $5.50 USD scarcity offer with countdown (500 slots) | ✅ | `src/components/landing/FoundingPassSection.tsx` + `CountdownWidget.tsx` |
 | 1.3 | "Why Galz Love Galz" core features section (no tech secrets, no premium/freemium language) | ✅ | `src/components/landing/WhyGalzSection.tsx` |
 | 1.4 | "No Men Will Ever Join" feature section | ✅ | `src/components/landing/NoMenSection.tsx` |
-| 1.5 | "The only app in Cape Town where galz love galz" local anchor | ✅ | `src/components/landing/CapeTownAnchor.tsx` |
+| 1.5 | "The only app in Tanzania & Kenya where galz love galz" local anchor | ✅ | `src/components/landing/CapeTownAnchor.tsx` |
 | 1.6 | Founder story section (anonymous, no location) | ✅ | `src/components/landing/FounderStory.tsx` |
 | 1.7 | Telegram CTA | ✅ | `src/components/landing/CommunityCTAs.tsx` (Telegram + WhatsApp + Share combined) |
 | 1.8 | WhatsApp CTA | ✅ | `src/components/landing/CommunityCTAs.tsx` (Telegram + WhatsApp + Share combined) |
@@ -147,9 +222,9 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 | # | Bonus Component | Purpose | File |
 |---|-----------------|---------|------|
 | 1.18 | BrandSplash | Deep-rose intro screen, sessionStorage-gated, fades after 1.8s | `src/components/landing/BrandSplash.tsx` |
-| 1.19 | LandingTabs | 6-tab navigation (Home / Why / Gate / Cape Town / Galz / Lelly) replacing long-scroll | `src/components/landing/LandingTabs.tsx` |
+| 1.19 | LandingTabs | 6-tab navigation (Home / Why / Gate / Galz / Lelly) replacing long-scroll | `src/components/landing/LandingTabs.tsx` |
 | 1.20 | TrustSafety | 5 safety promises (Nothing stored / One strike gone / **Nighttime checks** / Handles hidden / Report & block) — PUBLIC on Gate tab | `src/components/landing/TrustSafety.tsx` |
-| 1.21 | FAQ | 9-question accordion (Cape Town-only, no men, verification, data safety, Lelly Pass, pricing, 500 slots, free browsing, nighttime checks) | `src/components/landing/FAQ.tsx` |
+| 1.21 | FAQ | 9-question accordion (Tanzania & Kenya, no men, verification, data safety, Lelly Pass, pricing, 500 slots, free browsing, nighttime checks) | `src/components/landing/FAQ.tsx` |
 | 1.22 | LivePrice | Live USD→ZAR conversion badge with `tone` prop (bright text on dark bg, dark on light) | `src/components/landing/LivePrice.tsx` |
 | 1.23 | Exchange-rate API | Frankfurter.app integration, 1hr cache, fallback 18.0, no API key | `src/app/api/exchange-rate/route.ts` |
 | 1.24 | StickyMobileCTA | Mobile sticky claim bar + scroll-triggered visibility | `src/components/landing/StickyMobileCTA.tsx` |
@@ -163,7 +238,7 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 
 **Goal:** A multi-step verification system that keeps men out. Selfie → voice → video → 3-cloud consensus analysis. Nighttime trap re-verifies with IMAGE-ONLY (client-side + server-side AI) — triggers on login if the user is active between 21:00–04:00 SAST. Registration only after verification passes.
 
-> **✅ PHASE 2 SHIPPED** — All verification, registration, login, password-reset, NextAuth, Prisma, and middleware tasks are built and lint-clean. Selfie capture now ships with **auto-captcha** (face held "perfect" for 2.5s auto-captures with a countdown ring — no button tap needed). Backend analysis runs a **3-cloud consensus**: Gemini + HuggingFace + Sightengine (not Gemini alone). Seed data covers BOTH Cape Town suburbs AND Dar es Salaam districts + tribe tags.
+> **✅ PHASE 2 SHIPPED** — All verification, registration, login, password-reset, NextAuth, Prisma, and middleware tasks are built and lint-clean. Selfie capture now ships with **auto-captcha** (face held "perfect" for 2.5s auto-captures with a countdown ring — no button tap needed). Backend analysis runs a **3-cloud consensus**: Gemini + HuggingFace + Sightengine (not Gemini alone). Seed data covers Tanzania regions AND Kenya counties + tribe tags.
 >
 > **⚠️ Nighttime Trap (task 2.6):** The lib (`src/lib/nighttime-trap.ts`) and API route (`src/app/api/verify/night-check/route.ts`) are BUILT, but no client-side caller wires them into the login flow yet. Public-facing copy that promised this feature has been REMOVED from the landing page in the latest commit. Status: **Built, deferred to Phase 3 (post-login wiring)** — see task 2.6 below.
 
@@ -184,7 +259,7 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 | 2.13 | Password reset (Gmail nodemailer) | ✅ | `src/app/forgot-password/page.tsx` + `src/lib/email.ts` |
 | 2.14 | NextAuth.js setup | ✅ | `src/lib/auth.ts` |
 | 2.15 | Prisma database schema (User, Profile, etc.) | ✅ | `prisma/schema.prisma` |
-| 2.16 | Database seed data (BOTH Cape Town suburbs AND Dar es Salaam districts + tribe tags) | ✅ | `prisma/seed.ts` |
+| 2.16 | Database seed data (Tanzania regions + Kenya counties + tribe tags) | ✅ | `prisma/seed.ts` |
 | 2.17 | Middleware for `is_verified` route protection | ✅ | `src/middleware.ts` (Next.js 16 calls this file "proxy" now — file is still `middleware.ts` but logs a deprecation warning; functionally correct) |
 
 **Bonus deliverable shipped beyond the original task list:**
@@ -199,16 +274,16 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 
 ### Phase 3: Profile Setup + Tribe Tags + Location  ✅ COMPLETE
 
-**Goal:** Onboard new users with a warm, guided wizard. Tribe tags (5 max) for identity expression. Both Cape Town + Dar es Salaam districts for location.
+**Goal:** Onboard new users with a warm, guided wizard. Tribe tags (5 max) for identity expression. Tanzania regions + Kenya counties for location.
 
-> **✅ PHASE 3 SHIPPED** — All 11 tasks complete + 6 bonus fixes. Multi-step profile setup wizard (5 steps: Basic Info → District → Tribe Tags → Social Handles → Photos) with AnimatePresence transitions. Districts: 🇿🇦 Cape Town (8) + 🇹🇿 Dar es Salaam (5) = 13 total. Tribe tags: 90 total (30 identity, 30 subculture, 30 scene). Country isolation enforced: TZ users see only TZ districts + profiles, ZA users see only ZA. Social handles: Telegram, IG, Signal + any other social media + "In-app chat works great" message. Username: single-word only, real-time uniqueness check. Photo upload with drag-and-drop, downscale to 1024px, 6-photo limit. Nighttime Trap wired to login. Lint clean.
+> **✅ PHASE 3 SHIPPED** — All 11 tasks complete + 6 bonus fixes. Multi-step profile setup wizard (5 steps: Basic Info → District → Tribe Tags → Social Handles → Photos) with AnimatePresence transitions. Districts: 🇹🇿 Tanzania (31 regions) + 🇰🇪 Kenya (47 counties) = 78 total. Tribe tags: 90 total (30 identity, 30 subculture, 30 scene). Country isolation enforced: TZ users see only TZ districts + profiles, KE users see only KE. Social handles: Telegram, IG, Signal + any other social media + "In-app chat works great" message. Username: single-word only, real-time uniqueness check. Photo upload with drag-and-drop, downscale to 1024px, 6-photo limit. Nighttime Trap wired to login. Lint clean.
 
 | # | Task | Status | File Route |
 |---|------|--------|------------|
 | 3.1 | Profile setup wizard (multi-step) | ✅ | `src/app/profile/setup/page.tsx` |
 | 3.2 | Profile photo upload with modern image viewer | ✅ | `src/components/profile/PhotoUpload.tsx` |
 | 3.3 | Display name (single-word, unique, community-relevant), age, bio fields | ✅ | `src/components/profile/BasicInfo.tsx` + `src/app/api/profile/check-username/route.ts` |
-| 3.4 | Cape Town district selector (8 districts, SA only) | ✅ | `src/components/profile/DistrictSelector.tsx` |
+| 3.4 | District selector (31 Tanzania regions + 47 Kenya counties) | ✅ | `src/components/profile/DistrictSelector.tsx` |
 | 3.5 | Street tag (free text, neighborhood-level) | ✅ | `src/components/profile/StreetTag.tsx` |
 | 3.6 | Tribe tags selector (up to 5 from identity/subculture categories) | ✅ | `src/components/profile/TribeTagSelector.tsx` |
 | 3.7 | Social handles (Telegram, Instagram, Signal, any other — hidden until mutual, "In-app chat works great" message) | ✅ | `src/components/profile/SocialHandles.tsx` |
@@ -227,7 +302,7 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 | 3.15 | Districts API | GET /api/districts — ordered by country/region/name | `src/app/api/districts/route.ts` |
 | 3.16 | Tribe Tags API | GET /api/tribe-tags — ordered by category/name | `src/app/api/tribe-tags/route.ts` |
 
-**Phase 3 Exit Criteria:** ✅ MET — Profile wizard is complete and warm. Tribe tags (90 total, 5 max per user) are selectable and displayed. Cape Town (8 districts, SA only) selectable. Username is single-word, unique, with real-time availability check. Social handles include any social media + "In-app chat works great" message. Street tags work. Profile view and edit pages work. Nighttime Trap is wired to login. Landing page shows region banner. All API routes validated.
+**Phase 3 Exit Criteria:** ✅ MET — Profile wizard is complete and warm. Tribe tags (90 total, 5 max per user) are selectable and displayed. Tanzania (31 regions) + Kenya (47 counties) selectable. Username is single-word, unique, with real-time availability check. Social handles include any social media + "In-app chat works great" message. Street tags work. Profile view and edit pages work. Nighttime Trap is wired to login. Landing page shows region banner. All API routes validated.
 
 ---
 
@@ -266,9 +341,9 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 | 4.23 | Lelly Pass: See unlimited likes | ☐ Phase 4B | `src/lib/gating.ts` |
 | 4.24 | App layout with nav tabs (Discover → Chat → Events → Profile) | ✅ Phase 4A (Chat + Events disabled/greyed; Admin Shield toggle for admin role) | `src/app/(app)/layout.tsx` |
 | 4.25 | **Landing page anti-ghost message** — explicitly say on the landing page: "We want active users, not ghosts. Response rate badges keep everyone honest." | ☐ Phase 4B | `src/components/landing/WhyGalzSection.tsx` or `src/components/landing/TrustSafety.tsx` |
-| 4.26 | **Portland text audit** — remove any non-Portland words/country references from ALL UI strings (landing, join, discover, profile, emails). Verify no 'South Africa', 'Cape Town', 'Tanzania', 'Dar es Salaam', '🇿🇦', '🇹🇿' remain in any user-visible text. | ☐ Phase 4B | Throughout — `src/components/landing/*`, `src/app/join/*`, `src/app/(app)/discover/*`, `src/components/profile/*`, `src/lib/email/*` |
+| 4.26 | **Tanzania & Kenya text audit** — remove any non-TZ/KE words/country references from ALL UI strings (landing, join, discover, profile, emails). Verify no 'South Africa', 'Cape Town', 'Portland', 'Oregon', 'USA', '🇿🇦', '🇺🇸' remain in any user-visible text. | ☐ Phase 4B | Throughout — `src/components/landing/*`, `src/app/join/*`, `src/app/(app)/discover/*`, `src/components/profile/*`, `src/lib/email/*` |
 
-> **Phase 4A progress: 12 / 26 tasks DONE and LIVE.** Remaining 14 tasks = Phase 4B (next chat) — including the new 4.26 Portland text audit.
+> **Phase 4A progress: 12 / 26 tasks DONE and LIVE.** Remaining 14 tasks = Phase 4B (next chat) — including the new 4.26 Tanzania & Kenya text audit.
 > **Admin toggle (Phase 8 task 8.5):** already shipped early — admin logs in → lands on `/discover` → Shield toggle in nav → `/admin/manual-verification` → "Back to App" toggle → `/discover`. No re-login.
 
 **Phase 4 Exit Criteria:** Discover grid works with ALL filters (age, district, tribe tags, online, verified, photo, active, **response rate**). Live search is real-time and debounced. Filters stack with search. Like/pass system works. **Response Rate Badges visible on every profile card. Ghost risks can be filtered out.** Founder is pinned first. Infinite scroll loads more profiles. Landing page mentions anti-ghosting. Mobile is flawless.
@@ -306,11 +381,11 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 
 ### Phase 6: Events Tab
 
-**Goal:** Cape Town events discovery. Lelly Pass holders create events, everyone can join. Free users see titles only; Lelly users see full details.
+**Goal:** Events discovery across Tanzania & Kenya. Lelly Pass holders create events, everyone can join. Free users see titles only; Lelly users see full details.
 
 | # | Task | Status | File Route |
 |---|------|--------|------------|
-| 6.1 | Events page with Cape Town districts | ☐ | `src/app/events/page.tsx` |
+| 6.1 | Events page with Tanzania & Kenya districts | ☐ | `src/app/events/page.tsx` |
 | 6.2 | Event discovery (filter by district, category, date) | ☐ | `src/components/events/EventDiscovery.tsx` |
 | 6.3 | Event categories | ☐ | `src/components/events/EventCategories.tsx` |
 | 6.4 | Create event (Lelly only) | ☐ | `src/app/events/create/page.tsx` |
@@ -350,7 +425,7 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 
 - **Chat intercept:** "Every connection on Lellina is intentional. Secure your Lelly Pass to unlock direct conversations with verified women who are serious about dating."
 - **Photo intercept:** "Your digital boundary matters. Unlock the Lelly Pass for screenshot-protected, secure photo viewing."
-- **Events intercept:** "Step out into real life. Get your Lelly Pass to unlock the safest curated local queer venues and party coordinates across Cape Town."
+- **Events intercept:** "Step out into real life. Get your Lelly Pass to unlock the safest curated local queer venues and party coordinates across Tanzania & Kenya."
 
 **Phase 7 Exit Criteria:** Scarcity counter works. 500 Founding slots with countdown, auto-flip to standard. All value exchange gates are enforced across the app. Intercept messaging is live and uses psychological (not transactional) language.
 
@@ -429,7 +504,7 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 | 11.5 | All production setups | ☐ | Throughout |
 | 11.6 | Launch 🚀 | ☐ | — |
 
-**Phase 11 Exit Criteria:** Lellina is live. Real users can sign up, verify, discover, chat, attend events, and secure their Lelly Pass. Cape Town, let's go.
+**Phase 11 Exit Criteria:** Lellina is live. Real users can sign up, verify, discover, chat, attend events, and secure their Lelly Pass. Tanzania & Kenya, let's go.
 
 ---
 
@@ -469,9 +544,9 @@ Brief roadmap for after V1 ships:
 
 | Field | Value |
 |-------|-------|
-| **Phase** | Phase 1 ✅ COMPLETE. Phase 2 ✅ COMPLETE. Phase 3 ✅ COMPLETE. Phase 4A ✅ LIVE on Render (12/26 tasks: discover grid + like/pass + founder pin + infinite scroll + 4 core filters + app layout + admin toggle). Phase 4B ☐ NEXT (14 tasks: response rate badge + ghost score + 4 remaining filters + live search + mobile search + Lelly Pass gating + landing anti-ghost + Portland text audit). **Portland pivot:** 🌹 Portland, Oregon (6 quadrants) is the V1 launch market. TZ + ZA are Coming soon (code is generic — only seed data changed: admin country ZA→US, demo profiles renamed to Portland-appropriate names, /join country gate now allows US only, landing banner shows "Portland, Oregon 🌹"). 90 tribe tags. Country isolation enforced. Live at https://lellina-dev.onrender.com (commit a1258d9). |
+| **Phase** | Phase 1 ✅ COMPLETE. Phase 2 ✅ COMPLETE. Phase 3 ✅ COMPLETE. Phase 4A ✅ LIVE on Render (12/26 tasks: discover grid + like/pass + founder pin + infinite scroll + 4 core filters + app layout + admin toggle). Phase 4B ☐ NEXT (14 tasks: response rate badge + ghost score + 4 remaining filters + live search + mobile search + Lelly Pass gating + landing anti-ghost + Tanzania & Kenya text audit). **Tanzania & Kenya pivot:** 🇹🇿 Tanzania (31 regions) + 🇰🇪 Kenya (47 counties) = 78 districts is the V1 launch market. Other regions are Coming soon (code is generic — only seed data changed: admin country TZ, demo profiles renamed to East African names, /join country gate now allows TZ + KE only, landing banner shows "Tanzania 🇹🇿 & Kenya 🇰🇪"). 90 tribe tags. Country isolation enforced. Live at https://lellina-dev.onrender.com (commit a1258d9). |
 | **Version** | V1 in progress, V2 planned |
-| **Next Step** | Phase 4B — Response Rate Badge + Ghost Score + 4 remaining filters (online, photo, active, response rate) + Live Search (debounced 300ms) + Mobile Search + Lelly Pass gating (5 likes free / unlimited Lelly) + Landing anti-ghost message + **Portland text audit (4.26)** (14 tasks). See Phase 4 table above. |
+| **Next Step** | Phase 4B — Response Rate Badge + Ghost Score + 4 remaining filters (online, photo, active, response rate) + Live Search (debounced 300ms) + Mobile Search + Lelly Pass gating (5 likes free / unlimited Lelly) + Landing anti-ghost message + **Tanzania & Kenya text audit (4.26)** (14 tasks). See Phase 4 table above. |
 | **Admin Note** | Admin user (`cardoverli`) has ONE account with TWO modes: normal user view + admin dashboard toggle (no re-login). Ships in Phase 8 (task 8.5). Schema already supports: `role: ADMIN` + `Profile` (1:1). |
 
 ---

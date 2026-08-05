@@ -6,18 +6,9 @@
  * inside the app (post-login) via FOUNDING_PASS (kept here for in-app use).
  */
 
-// ─── Cape Town Suburbs (8) — South Africa ──────────────────────────────────
-// Used internally (post-login / onboarding). NOT shown on the public landing.
-export const CAPE_TOWN_SUBS = [
-  { name: "Blaauwberg", areas: "Bloubergstrand · Table View · Milnerton" },
-  { name: "Cape Flats", areas: "Athlone · Grassy Park · Lansdowne" },
-  { name: "Eastern", areas: "Strand · Gordon's Bay · Somerset West" },
-  { name: "Helderberg", areas: "Somerset West · Sir Lowry's Pass" },
-  { name: "Khayelitsha / Mitchells Plain", areas: "Khayelitsha · Mitchells Plain · Langa" },
-  { name: "Northern", areas: "Bellville · Durbanville · Tygervalley" },
-  { name: "Southern", areas: "Wynberg · Claremont · Muizenberg" },
-  { name: "Table Bay", areas: "De Waterkant · Green Point · Sea Point · Bo-Kaap · Camps Bay" },
-] as const;
+// ─── Launch Markets (Tanzania + Kenya) ──────────────────────────────────────
+// Districts are seeded from prisma/seed.ts (31 TZ regions + 47 KE counties).
+// NOT shown on the public landing — used internally post-login/onboarding.
 
 // ─── Lelly Pass Pricing (USD primary) ──────────────────────────────────────
 // In-app only. NOT rendered on the public landing.

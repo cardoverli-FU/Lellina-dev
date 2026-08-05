@@ -1,8 +1,7 @@
 // ════════════════════════════════════════════════════════════════════
-//  Lellina — Seed Script (Portland, USA — V1 Launch Market)
-//  Seeds: 6 Portland quadrants + 90 tribe tags
-//         + admin (founder) + 8 demo profiles for discover verification
-//  (TZ + ZA = Coming soon — code is generic, swap seed data to expand)
+//  Lellina — Seed Script (Tanzania + Kenya — East Africa Launch)
+//  Seeds: 31 TZ regions + 47 KE counties + 90 tribe tags
+//         + admin (founder) + 10 demo profiles for discover verification
 // ════════════════════════════════════════════════════════════════════
 
 import { PrismaClient } from '@prisma/client'
@@ -10,15 +9,32 @@ import bcrypt from 'bcryptjs'
 
 const db = new PrismaClient()
 
-// ─── 6 Portland Quadrants (V1 Launch Market — USA) ────────────────
-// Zip codes will be added in a later phase. For now, quadrants only.
+// ─── 31 Tanzania Regions ────────────────────────────────────────────
+const TANZANIA_REGIONS = [
+  'Arusha', 'Dar es Salaam', 'Dodoma', 'Geita', 'Iringa', 'Kagera',
+  'Kaskazini Pemba', 'Kaskazini Unguja', 'Katavi', 'Kigoma', 'Kilimanjaro',
+  'Kusini Pemba', 'Kusini Unguja', 'Lindi', 'Manyara', 'Mara', 'Mbeya',
+  'Mjini Magharibi', 'Morogoro', 'Mtwara', 'Mwanza', 'Njombe', 'Pwani',
+  'Rukwa', 'Ruvuma', 'Shinyanga', 'Simiyu', 'Singida', 'Songwe', 'Tabora',
+  'Tanga',
+]
+
+// ─── 47 Kenya Counties ──────────────────────────────────────────────
+const KENYA_COUNTIES = [
+  'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo-Marakwet', 'Embu',
+  'Garissa', 'Homa Bay', 'Isiolo', 'Kajiado', 'Kakamega', 'Kericho',
+  'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii', 'Kisumu', 'Kitui', 'Kwale',
+  'Laikipia', 'Lamu', 'Machakos', 'Makueni', 'Mandera', 'Marsabit', 'Meru',
+  'Migori', 'Mombasa', "Murang'a", 'Nairobi', 'Nakuru', 'Nandi', 'Narok',
+  'Nyamira', 'Nyandarua', 'Nyeri', 'Samburu', 'Siaya', 'Taita-Taveta',
+  'Tana River', 'Tharaka-Nithi', 'Trans-Nzoia', 'Turkana', 'Uasin Gishu',
+  'Vihiga', 'Wajir', 'West Pokot',
+]
+
+// ─── Districts (78 total: 31 TZ + 47 KE) ────────────────────────────
 const DISTRICTS = [
-  { name: 'Northwest Portland', region: 'Portland', country: 'US', areas: ['Pearl District', 'Nob Hill', 'Northwest'] },
-  { name: 'Southwest Portland', region: 'Portland', country: 'US', areas: ['Downtown', 'Goose Hollow', 'Hillsdale'] },
-  { name: 'Northeast Portland', region: 'Portland', country: 'US', areas: ['Alberta Arts', 'Irvington', 'Hollywood'] },
-  { name: 'Southeast Portland', region: 'Portland', country: 'US', areas: ['Hawthorne', 'Richmond', 'Mt Tabor'] },
-  { name: 'North Portland', region: 'Portland', country: 'US', areas: ['Kenton', 'St Johns', 'Mississippi'] },
-  { name: 'South Portland', region: 'Portland', country: 'US', areas: ['Sellwood', 'Eastmoreland', 'Brooklyn'] },
+  ...TANZANIA_REGIONS.map((name) => ({ name, region: 'TZ', country: 'Tanzania', areas: [] as string[] })),
+  ...KENYA_COUNTIES.map((name) => ({ name, region: 'KE', country: 'Kenya', areas: [] as string[] })),
 ]
 
 // ─── Tribe Tags (30 identity + 30 subculture + 30 scene = 90 total) ─
@@ -126,7 +142,7 @@ async function main() {
   // ─── 1. Districts ─────────────────────────────────────────────
   await db.district.deleteMany({})
 
-  console.log('📍 Seeding 6 Portland quadrants...')
+  console.log(`📍 Seeding ${DISTRICTS.length} districts (31 TZ regions + 47 KE counties)...`)
   for (const d of DISTRICTS) {
     await db.district.upsert({
       where: { name: d.name },
@@ -175,7 +191,7 @@ async function main() {
         role: 'ADMIN',
         isVerified: true,
         verifiedAt: new Date(),
-        country: 'US',
+        country: 'TZ',
       },
       create: {
         email: adminEmail,
@@ -184,16 +200,16 @@ async function main() {
         role: 'ADMIN',
         isVerified: true,
         verifiedAt: new Date(),
-        country: 'US',
+        country: 'TZ',
       },
     })
-    console.log(`   ✅ Admin: ${adminUsername} / ${adminEmail} (role=ADMIN, isVerified=true, gate bypassed)`)
+    console.log(`   ✅ Admin: ${adminUsername} / ${adminEmail} (role=ADMIN, isVerified=true, country=TZ, gate bypassed)`)
     console.log(`   Password: ${'*'.repeat(adminPassword.length)}`)
     console.log('   → /login (direct, no verification gate)')
     console.log('   → Login with username OR email. Forgot password sends to this email.')
   }
 
-  // ─── 4. Founder Profile + Demo Profiles (Phase 4A) ────────────
+  // ─── 4. Founder Profile + Demo Profiles ──────────────────────
   console.log('\n✨ Seeding founder + demo profiles...')
 
   const allDistricts = await db.district.findMany()
@@ -204,7 +220,7 @@ async function main() {
   if (adminUsername && adminPassword) {
     const adminUser = await db.user.findUnique({ where: { email: adminEmail } })
     if (adminUser) {
-      const nwPortland = allDistricts.find((d) => d.name === 'Northwest Portland')
+      const darEsSalaam = allDistricts.find((d) => d.name === 'Dar es Salaam')
       const founderTagIds = [tagId('Creative'), tagId('Entrepreneur'), tagId('Coffee Addict')].filter(Boolean) as string[]
       await db.profile.upsert({
         where: { userId: adminUser.id },
@@ -212,7 +228,7 @@ async function main() {
           displayName: 'Lellina App Official',
           age: 28,
           bio: 'The official Lellina account. Built for us, by us. Find your people, gal.',
-          districtId: nwPortland?.id,
+          districtId: darEsSalaam?.id,
           tribeTags: JSON.stringify(founderTagIds),
           isFounder: true,
           isOnline: true,
@@ -224,7 +240,7 @@ async function main() {
           displayName: 'Lellina App Official',
           age: 28,
           bio: 'The official Lellina account. Built for us, by us. Find your people, gal.',
-          districtId: nwPortland?.id,
+          districtId: darEsSalaam?.id,
           tribeTags: JSON.stringify(founderTagIds),
           isFounder: true,
           isOnline: true,
@@ -232,20 +248,26 @@ async function main() {
           responseRateTier: 'FAST',
         },
       })
-      console.log('   ✅ Founder: Lellina App Official (US, Northwest Portland, isFounder=true)')
+      console.log('   ✅ Founder: Lellina App Official (TZ, Dar es Salaam, isFounder=true)')
     }
   }
 
   // Demo profiles (for discover grid verification — NOT real users)
+  // 5 Tanzania + 5 Kenya with Swahili/East African names
   const DEMO_PROFILES = [
-    { country: 'US', email: 'demo.maya@lellina.seed', username: 'maya_pdx', displayName: 'Maya', age: 24, bio: 'Coffee, sunsets, and good vibes only. Pearl District is home.', district: 'Northwest Portland', tags: ['Femme', 'Creative', 'Coffee Addict'], isOnline: true, minsAgo: 5, tier: 'FAST' },
-    { country: 'US', email: 'demo.jordan@lellina.seed', username: 'jordan_pdx', displayName: 'Jordan', age: 28, bio: 'Stud energy. Gym every morning. Looking for something real.', district: 'Southeast Portland', tags: ['Stud', 'Runner', 'Dog Mom'], isOnline: false, minsAgo: 180, tier: 'SLOW' },
-    { country: 'US', email: 'demo.sage@lellina.seed', username: 'sage_pdx', displayName: 'Sage', age: 31, bio: 'Artist + plant mom. My studio is my happy place.', district: 'Northeast Portland', tags: ['Androgynous', 'Artist', 'Plant Parent'], isOnline: true, minsAgo: 15, tier: 'FAST' },
-    { country: 'US', email: 'demo.riley@lellina.seed', username: 'riley_pdx', displayName: 'Riley', age: 22, bio: 'Just moved to Portland. Show me around?', district: 'North Portland', tags: ['Soft Masc', 'Cyclist', 'Tattooed'], isOnline: false, minsAgo: 1440, tier: null },
-    { country: 'US', email: 'demo.kai@lellina.seed', username: 'kai_pdx', displayName: 'Kai', age: 26, bio: 'Musician + night owl. Find me at a show or a late-night diner.', district: 'Southwest Portland', tags: ['Boi', 'Music Lover', 'Night Owl'], isOnline: true, minsAgo: 30, tier: 'FAST' },
-    { country: 'US', email: 'demo.zara@lellina.seed', username: 'zara_pdx', displayName: 'Zara', age: 25, bio: 'Foodie who hikes on weekends. Best of both worlds.', district: 'Southeast Portland', tags: ['Femme', 'Foodie', 'Hiker'], isOnline: true, minsAgo: 10, tier: 'FAST' },
-    { country: 'US', email: 'demo.amara@lellina.seed', username: 'amara_pdx', displayName: 'Amara', age: 29, bio: 'Building something big. Wine nights are my therapy.', district: 'Northeast Portland', tags: ['Stem', 'Entrepreneur', 'Wine Lover'], isOnline: false, minsAgo: 300, tier: 'SLOW' },
-    { country: 'US', email: 'demo.devon@lellina.seed', username: 'devon_pdx', displayName: 'Devon', age: 23, bio: 'Student by day, bookworm by night. Always at the coffee shop.', district: 'South Portland', tags: ['Soft Butch', 'Student', 'Bookworm'], isOnline: true, minsAgo: 2, tier: 'FAST' },
+    // ── Tanzania (5) ──
+    { country: 'TZ', email: 'demo.amina@lellina.seed', username: 'amina_dar', displayName: 'Amina', age: 24, bio: 'Karibu! Coffee lover and creative soul. Dar is where the heart is.', district: 'Dar es Salaam', tags: ['Femme', 'Creative', 'Coffee Addict'], isOnline: true, minsAgo: 5, tier: 'FAST' },
+    { country: 'TZ', email: 'demo.zuwena@lellina.seed', username: 'zuwena_arusha', displayName: 'Zuwena', age: 27, bio: 'Safi! Hiker and nature enthusiast at the foot of Meru.', district: 'Arusha', tags: ['Stud', 'Hiker', 'Plant Parent'], isOnline: false, minsAgo: 180, tier: 'SLOW' },
+    { country: 'TZ', email: 'demo.fatma@lellina.seed', username: 'fatma_mwanza', displayName: 'Fatma', age: 30, bio: 'Lake Victoria sunsets hit different. Music is my therapy, pole pole hatua hatua.', district: 'Mwanza', tags: ['Androgynous', 'Music Lover', 'Beach Gal'], isOnline: true, minsAgo: 15, tier: 'FAST' },
+    { country: 'TZ', email: 'demo.neema@lellina.seed', username: 'neema_zanzibar', displayName: 'Neema', age: 25, bio: 'Kisiwa cha Unguja! Island girl with big dreams and a bigger heart.', district: 'Kaskazini Unguja', tags: ['Femme', 'Artist', 'Dancer'], isOnline: true, minsAgo: 30, tier: 'FAST' },
+    { country: 'TZ', email: 'demo.saida@lellina.seed', username: 'saida_dodoma', displayName: 'Saida', age: 29, bio: 'Capital city energy. Entrepreneur building something beautiful — tujenge pamoja.', district: 'Dodoma', tags: ['Stem', 'Entrepreneur', 'Bookworm'], isOnline: false, minsAgo: 300, tier: 'SLOW' },
+
+    // ── Kenya (5) ──
+    { country: 'KE', email: 'demo.wanjiku@lellina.seed', username: 'wanjiku_nrb', displayName: 'Wanjiku', age: 23, bio: 'Nairobi nights and creative days. Looking for my person — pole pole hatua hatua.', district: 'Nairobi', tags: ['Soft Masc', 'Creative', 'Night Owl'], isOnline: true, minsAgo: 10, tier: 'FAST' },
+    { country: 'KE', email: 'demo.achieng@lellina.seed', username: 'achieng_msa', displayName: 'Achieng', age: 26, bio: 'Coastal vibes in Mombasa! Saltwater and good company — that is all.', district: 'Mombasa', tags: ['Femme', 'Beach Gal', 'Foodie'], isOnline: true, minsAgo: 2, tier: 'FAST' },
+    { country: 'KE', email: 'demo.njeri@lellina.seed', username: 'njeri_kisumu', displayName: 'Njeri', age: 28, bio: 'Lakeside living in Kisumu. Yogi by morning, poet by night.', district: 'Kisumu', tags: ['Butch', 'Yogi', 'Poet'], isOnline: false, minsAgo: 1440, tier: null },
+    { country: 'KE', email: 'demo.akinyi@lellina.seed', username: 'akinyi_nakuru', displayName: 'Akinyi', age: 31, bio: 'Nakuru vibes! Runner and animal lover — karibu to my world.', district: 'Nakuru', tags: ['Tomboy', 'Runner', 'Dog Mom'], isOnline: true, minsAgo: 8, tier: 'FAST' },
+    { country: 'KE', email: 'demo.muthoni@lellina.seed', username: 'muthoni_kiambu', displayName: 'Muthoni', age: 22, bio: 'Student in Kiambu. Books, chai, and big dreams — one step at a time.', district: 'Kiambu', tags: ['Soft Butch', 'Student', 'Bookworm'], isOnline: false, minsAgo: 420, tier: 'SLOW' },
   ]
 
   for (const demo of DEMO_PROFILES) {

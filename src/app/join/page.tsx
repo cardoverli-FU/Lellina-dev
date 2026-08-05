@@ -13,12 +13,12 @@ import { COUNTRIES, ALLOWED_COUNTRIES, type Country } from '@/lib/lellina/countr
 /**
  * /join — Lellina country selector gate (Step 0 of signup).
  *
- * Gated country rollout. United States (Portland, Oregon) is allowed at launch.
+ * Gated country rollout. Tanzania & Kenya are allowed at launch.
  * Everyone else sees a "Coming soon" screen with community links + exit.
  * ZERO data saved for non-allowed countries.
  *
  * Flow:
- *   landing "Get Verified" / "Join"  →  /join  →  US? → /verify
+ *   landing "Get Verified" / "Join"  →  /join  →  TZ/KE? → /verify
  *                                            ↘  other  → ComingSoon (exit to /)
  */
 export default function JoinPage() {
@@ -44,10 +44,15 @@ export default function JoinPage() {
 
   // ─── Per-country greeting config for the allowed confirmation state ──────
   const GREETINGS: Record<string, { flag: string; greeting: string; body: string }> = {
-    US: {
-      flag: '🌹',
-      greeting: 'Welcome, gal!',
-      body: "You're in the right place. Portland is live — let's get you verified so you can meet your galz.",
+    TZ: {
+      flag: '🇹🇿',
+      greeting: 'Karibu, gal!',
+      body: "Tanzania is live — let's get you verified so you can meet your galz. Karibu sana!",
+    },
+    KE: {
+      flag: '🇰🇪',
+      greeting: 'Karibu, gal!',
+      body: "Kenya is live — let's get you verified so you can meet your galz. Karibu sana!",
     },
   }
   const greeting = selected?.allowed ? GREETINGS[selected.code] : null
@@ -90,7 +95,7 @@ export default function JoinPage() {
               </h1>
 
               <p className="mt-3 text-center font-body text-sm sm:text-base text-cream/70 leading-relaxed">
-                Lellina is rolling out one home at a time. We start with Portland, Oregon.
+                Lellina is rolling out one home at a time. We start with Tanzania & Kenya.
               </p>
 
               <div className="mt-8">
@@ -176,7 +181,7 @@ export default function JoinPage() {
             </motion.section>
           )}
 
-          {/* ─── STATE B: Allowed country (US) — warm confirmation ─── */}
+          {/* ─── STATE B: Allowed country (TZ/KE) — warm confirmation ─── */}
           {selected?.allowed && greeting && (
             <motion.section
               key="allowed"

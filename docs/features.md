@@ -1,8 +1,8 @@
 # Lellina — Feature List
 
 > **Galz for Galz** — Verified women-only space.
-> V1 launch in **Portland, Oregon (USA)** 🌹. Tanzania (Dar es Salaam) + South Africa (Cape Town) are **Coming soon**.
-> Public landing shows "Portland, Oregon 🌹" — the /join country gate now allows US only (was ZA+TZ). Other regions show "Coming soon".
+> V1 launch in **Tanzania 🇹🇿 & Kenya 🇰🇪**. Other regions are **Coming soon**.
+> Public landing shows "Tanzania & Kenya" — the /join country gate now allows TZ + KE only. Other regions show "Coming soon".
 > No men. No bots. Only verified women.
 
 ---
@@ -48,8 +48,8 @@
 |---|---|
 | **App Name** | Lellina |
 | **Tagline** | Galz for Galz |
-| **Market** | Portland, Oregon (USA) — V1 launch market. Tanzania + South Africa are Coming soon (code is generic, only seed data changed) |
-| **Districts** | **6 Portland quadrants** — Northwest, Southwest, Northeast, Southeast, North, South (replaces the 8 Cape Town + 5 Dar es Salaam districts from the earlier dual-launch plan). Zip codes added in a later phase. |
+| **Market** | Tanzania & Kenya — V1 launch market. Other regions are Coming soon (code is generic, only seed data changed) |
+| **Districts** | **31 Tanzania regions + 47 Kenya counties (78 total)** — replaces the 6 Portland quadrants from the earlier Portland pivot plan. More granular districts added in later phases. |
 | **Team** | Solo dev + AI only |
 | **Distribution** | Web app first → APK via CapacitorJS (V2) |
 | **Payment** | LAST phase of V1. Gateway TBD. |
@@ -57,16 +57,93 @@
 
 ---
 
-## 🗺️ PORTLAND QUADRANTS (6) — Oregon, USA
+## 🗺️ TANZANIA REGIONS (31)
 
-| # | Quadrant | Key Areas |
+| # | Region | Country |
 |---|---|---|
-| 1 | Northwest Portland | Pearl District, Nob Hill, Northwest |
-| 2 | Southwest Portland | Downtown, Goose Hollow, Hillsdale |
-| 3 | Northeast Portland | Alberta Arts, Irvington, Hollywood |
-| 4 | Southeast Portland | Hawthorne, Richmond, Mt Tabor |
-| 5 | North Portland | Kenton, St Johns, Mississippi |
-| 6 | South Portland | Sellwood, Eastmoreland, Brooklyn |
+| 1 | Arusha | Tanzania |
+| 2 | Dar es Salaam | Tanzania |
+| 3 | Dodoma | Tanzania |
+| 4 | Geita | Tanzania |
+| 5 | Iringa | Tanzania |
+| 6 | Kagera | Tanzania |
+| 7 | Kaskazini Pemba | Tanzania |
+| 8 | Kaskazini Unguja | Tanzania |
+| 9 | Katavi | Tanzania |
+| 10 | Kigoma | Tanzania |
+| 11 | Kilimanjaro | Tanzania |
+| 12 | Kusini Pemba | Tanzania |
+| 13 | Kusini Unguja | Tanzania |
+| 14 | Lindi | Tanzania |
+| 15 | Manyara | Tanzania |
+| 16 | Mara | Tanzania |
+| 17 | Mbeya | Tanzania |
+| 18 | Mjini Magharibi | Tanzania |
+| 19 | Morogoro | Tanzania |
+| 20 | Mtwara | Tanzania |
+| 21 | Mwanza | Tanzania |
+| 22 | Njombe | Tanzania |
+| 23 | Pwani | Tanzania |
+| 24 | Rukwa | Tanzania |
+| 25 | Ruvuma | Tanzania |
+| 26 | Shinyanga | Tanzania |
+| 27 | Simiyu | Tanzania |
+| 28 | Singida | Tanzania |
+| 29 | Songwe | Tanzania |
+| 30 | Tabora | Tanzania |
+| 31 | Tanga | Tanzania |
+
+## 🗺️ KENYA COUNTIES (47)
+
+| # | County | Country |
+|---|---|---|
+| 1 | Baringo | Kenya |
+| 2 | Bomet | Kenya |
+| 3 | Bungoma | Kenya |
+| 4 | Busia | Kenya |
+| 5 | Elgeyo-Marakwet | Kenya |
+| 6 | Embu | Kenya |
+| 7 | Garissa | Kenya |
+| 8 | Homa Bay | Kenya |
+| 9 | Isiolo | Kenya |
+| 10 | Kajiado | Kenya |
+| 11 | Kakamega | Kenya |
+| 12 | Kericho | Kenya |
+| 13 | Kiambu | Kenya |
+| 14 | Kilifi | Kenya |
+| 15 | Kirinyaga | Kenya |
+| 16 | Kisii | Kenya |
+| 17 | Kisumu | Kenya |
+| 18 | Kitui | Kenya |
+| 19 | Kwale | Kenya |
+| 20 | Laikipia | Kenya |
+| 21 | Lamu | Kenya |
+| 22 | Machakos | Kenya |
+| 23 | Makueni | Kenya |
+| 24 | Mandera | Kenya |
+| 25 | Marsabit | Kenya |
+| 26 | Meru | Kenya |
+| 27 | Migori | Kenya |
+| 28 | Mombasa | Kenya |
+| 29 | Murang'a | Kenya |
+| 30 | Nairobi | Kenya |
+| 31 | Nakuru | Kenya |
+| 32 | Nandi | Kenya |
+| 33 | Narok | Kenya |
+| 34 | Nyamira | Kenya |
+| 35 | Nyandarua | Kenya |
+| 36 | Nyeri | Kenya |
+| 37 | Samburu | Kenya |
+| 38 | Siaya | Kenya |
+| 39 | Taita-Taveta | Kenya |
+| 40 | Tana River | Kenya |
+| 41 | Tharaka-Nithi | Kenya |
+| 42 | Trans-Nzoia | Kenya |
+| 43 | Turkana | Kenya |
+| 44 | Uasin Gishu | Kenya |
+| 45 | Vihiga | Kenya |
+| 46 | Wajir | Kenya |
+| 47 | West Pokot | Kenya |
 
 ---
 
@@ -112,7 +189,7 @@ Four tabs. Always visible. Bottom navigation on mobile. Side navigation on deskt
 | 4 | **Galz** | Community CTAs: Telegram group + WhatsApp channel + Share button. |
 | 5 | **Lelly** | Pricing (Founding $5.50 USD / Standard $7.50 USD/month via `LivePrice` with live ZAR conversion) + Free vs Lelly comparison + "How You Pay" privacy framing + FAQ. |
 
-> **Note:** After the Portland pivot, the landing publicly shows **"Portland, Oregon 🌹"** as the V1 launch market. Tanzania + South Africa appear as "Coming soon" (the code is generic — only seed data changed). The `/join` country gate now allows US only (was ZA+TZ). The earlier "Cape Town" tab was REMOVED at the original TZ+ZA dual-launch pivot, leaving 5 tabs; the dual-launch plan itself was later replaced by the single-market Portland pivot.
+> **Note:** After the Tanzania & Kenya pivot, the landing publicly shows **"Tanzania 🇹🇿 & Kenya 🇰🇪"** as the V1 launch market. Other regions appear as "Coming soon" (the code is generic — only seed data changed). The `/join` country gate now allows TZ + KE only. The earlier "Cape Town" tab was REMOVED at the original TZ+ZA dual-launch pivot, and the Portland pivot has now been replaced by the Tanzania & Kenya pivot.
 
 **Components:**
 
@@ -191,9 +268,9 @@ Four tabs. Always visible. Bottom navigation on mobile. Side navigation on deskt
 | 1 | Profile photo | Upload min 1 photo. Modern, cute image viewer for preview. |
 | 2 | Display name | Free text. Shown on profile and discover grid. |
 | 3 | Age / DOB | Date of birth. Age calculated and displayed. |
-| 4 | Cape Town district | Select from 8 districts. |
+| 4 | District | Select from 31 Tanzania regions or 47 Kenya counties. |
 | 5 | Street tag | Free text. Neighborhood-level location. |
-| 6 | Bio | Free text. Tell Cape Town who you are. |
+| 6 | Bio | Free text. Tell the community who you are. |
 | 7 | Tribe tags | Select up to **5 tags** from identity/subculture categories. Not mandatory but powerful for matching. |
 | 8 | Social handles | Telegram, Instagram, Signal. Hidden until mutual approval. |
 | 9 | Completion | Progress bar. Profile must be complete before discover. |
@@ -202,7 +279,7 @@ Four tabs. Always visible. Bottom navigation on mobile. Side navigation on deskt
 
 ### 5. Discover Grid + Filters + Live Search
 
-**Goal:** Browse verified women in Cape Town. The heart of the app. EVERYTHING is filterable for FREE. Users can find exactly who they're looking for. But when they want to TALK — that's where Lelly Pass comes in.
+**Goal:** Browse verified women in Tanzania & Kenya. The heart of the app. EVERYTHING is filterable for FREE. Users can find exactly who they're looking for. But when they want to TALK — that's where Lelly Pass comes in.
 
 **Core Grid:**
 
@@ -221,7 +298,7 @@ Four tabs. Always visible. Bottom navigation on mobile. Side navigation on deskt
 | Filter | Type | Details |
 |---|---|---|
 | **Age Range** | Slider | Min/max age slider. 18–60 range. |
-| **District** | Multi-select | Filter by Cape Town's 8 districts. Select one or many. |
+| **District** | Multi-select | Filter by Tanzania's 31 regions or Kenya's 47 counties. Select one or many. |
 | **Tribe Tags** | Multi-select | Filter by identity/subculture tags. Match users who selected the same tribe. |
 | **Online Now** | Toggle | Show only online users. |
 | **Verified Only** | Toggle | Show only verified users (default: on). |
@@ -275,11 +352,11 @@ Four tabs. Always visible. Bottom navigation on mobile. Side navigation on deskt
 
 ### 7. Events Tab
 
-**Goal:** Connect galz in real life across Cape Town. Events are the bridge from digital to physical.
+**Goal:** Connect galz in real life across Tanzania & Kenya. Events are the bridge from digital to physical.
 
 | Feature | Details |
 |---|---|
-| Events page | Browse events by Cape Town district. |
+| Events page | Browse events by Tanzania region or Kenya county. |
 | Event discovery | Filter by district, category, date. |
 | Event categories | Parties, meetups, brunch, beach days, art shows, etc. |
 | Free: Event titles | ✅ See event titles only. |
@@ -297,7 +374,7 @@ Event {
   title: String
   description: String
   category: String
-  district: String (Cape Town district)
+  district: String (Tanzania region or Kenya county)
   venue: String
   date: DateTime
   createdBy: String (user ID, Lelly Pass required)
@@ -335,7 +412,7 @@ Event {
 |---|---|
 | **Chat** | "Every connection on Lellina is intentional. Secure your Lelly Pass to unlock direct conversations with verified women who are serious about dating." |
 | **Photo** | "Your digital boundary matters. Unlock the Lelly Pass for screenshot-protected, secure photo viewing." |
-| **Events** | "Step out into real life. Get your Lelly Pass to unlock the safest curated local queer venues and party coordinates across Cape Town." |
+| **Events** | "Step out into real life. Get your Lelly Pass to unlock the safest curated local queer venues and party coordinates across Tanzania & Kenya." |
 
 **Lelly Badge:** Gold badge on profile. Visible to all. Signals: "I'm serious about real connection."
 
@@ -368,7 +445,7 @@ Event {
 | View other profiles | Full profile view with photos, bio, tags, district. |
 | Photo gallery | Cute, modern image viewer. VERY modern. VERY cute. VERY sexy. |
 | Tag display | All selected tags displayed beautifully. |
-| District display | Cape Town district shown with local area tag. |
+| District display | Tanzania region or Kenya county shown with local area tag. |
 | Social handles | Visible only after mutual approval. |
 | Block/report user | Block = user disappears from your grid and chat. Report = sends to admin queue. |
 
@@ -389,27 +466,20 @@ Event {
 
 ---
 
-### 12. Location System — Cape Town
+### 12. Location System — Tanzania & Kenya
 
-**Goal:** Hyper-local. Every user is in Cape Town. District-level precision.
+**Goal:** Hyper-local. Every user is in Tanzania or Kenya. District-level precision.
 
 | Feature | Details |
 |---|---|
-| District selection | Choose from 8 Cape Town districts during profile setup. |
-| Street tag | Free text. Neighborhood-level. "De Waterkant", "Observatory", "Sea Point", etc. |
-| Seed data | All 8 districts pre-seeded in database. |
+| District selection | Choose from 31 Tanzania regions or 47 Kenya counties during profile setup. |
+| Street tag | Free text. Neighborhood-level. |
+| Seed data | All 78 districts pre-seeded in database (31 TZ + 47 KE). |
 | Filtering | Discover grid filters by district. Events filter by district. |
 
-**Cape Town Districts (Seed Data):**
+**Districts (Seed Data):**
 
-1. Blaauwberg
-2. Cape Flats
-3. Eastern
-4. Helderberg
-5. Khayelitsha/Mitchells Plain
-6. Northern
-7. Southern
-8. Table Bay
+- 31 Tanzania regions + 47 Kenya counties (78 total — see tables above)
 
 ---
 
@@ -431,7 +501,7 @@ Event {
 | **Relationship Dynamics** | Monogamous, Ethically non-monogamous, Polyamorous, Casual, Long-term, Open to exploring, Situationship, Nesting partner |
 | **Desires** | Deep conversation, Adventure partner, Travel buddy, Creative collaboration, Quiet nights, Beach days, Coffee dates, Club nights |
 | **Experience Level** | Just discovering, Exploring, Confident, Experienced, Mentor |
-| **Local Scene (Cape Town)** | De Waterkant, Green Point, Sea Point, Observatory, Woodstock, Bo-Kaap, Gardens, Tamboerskloof, Hout Bay, Camps Bay, Muizenberg, Kloof Street, Long Street, Bree Street |
+| **Local Scene (Tanzania & Kenya)** | Kariakoo, Ilala, Ubungo, Upanga, Msasani, Oysterbay, Mikocheni, Mbezi, Tegeta, Kawe, Sinza, Kijitonyama, Makumbusho, Kimara, Tandale, Mwananyamala, Hananasif, Vingunguti, Mburahati, Buguruni, Keko, Chang'ombe, Mtoni, Chaani, Temeke, Yombo, Kurasini, Pugu, Ukonga, Segerea |
 
 **Tag Data Model:**
 
@@ -451,7 +521,7 @@ UserProfile {
 
 **Discover Filter Integration:**
 - Users can filter by ANY tag category
-- Multi-select: "Show me Studs + Soft studs in Table Bay + Southern"
+- Multi-select: "Show me Studs + Soft studs in Dar es Salaam + Nairobi"
 - Live search matches against tag labels
 - The more specific the filter, the more powerful the match
 
@@ -621,7 +691,7 @@ These are NOT in V1. Listed for planning only.
 |---|---|---|
 | **Phase 1** | Landing Page + Design System | ✅ COMPLETE. Converting. Founding offer. Geographically neutral post-pivot. |
 | **Phase 2** | Verification Gate + Registration | ✅ COMPLETE. 4-step verification (selfie + voice + video + 3-cloud consensus). Auto-captcha on selfie. Device fingerprinting. Nighttime Trap wired to login (lines 81–97). |
-| **Phase 3** | Profile Setup + Tags + Location | ✅ COMPLETE. Wizard (5 steps). Portland (6 quadrants) — was 8 CPT + 5 Dar before the pivot. 90 tribe tags (5 max). Country isolation enforced (US only at the gate). |
+| **Phase 3** | Profile Setup + Tags + Location | ✅ COMPLETE. Wizard (5 steps). Tanzania (31 regions) + Kenya (47 counties) = 78 districts. 90 tribe tags (5 max). Country isolation enforced (TZ + KE at the gate). |
 | **Phase 4** | Discover Grid + Filters + Live Search | Grid view. ALL filters (age, district, tags, online). Live search. Like/Match. |
 | **Phase 5** | Chat Engine + Image Viewer | Socket.io. Handle requests. Blurred photos for free. |
 | **Phase 6** | Events Tab | Event CRUD. District filtering. Title-only for free. |
@@ -632,7 +702,7 @@ These are NOT in V1. Listed for planning only.
 
 ---
 
-*Lellina — Galz for Galz. A verified women-only space. Live in Portland, Oregon 🌹. (Tanzania + South Africa — Coming soon.)*
+*Lellina — Galz for Galz. A verified women-only space. Live in Tanzania 🇹🇿 & Kenya 🇰🇪. (Other regions — Coming soon.)*
 
 ---
 

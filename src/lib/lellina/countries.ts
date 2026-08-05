@@ -1,7 +1,7 @@
 /**
  * Lellina — Country Rollout List
  *
- * Gated country rollout. At launch, United States (Portland, Oregon) is
+ * Gated country rollout. At launch, Tanzania + Kenya are
  * allowed through to `/verify`. Every other country hits the "Coming soon"
  * screen on `/join` and NO data is stored.
  *
@@ -12,7 +12,7 @@
  * `code`  — ISO 3166-1 alpha-2 country code (uppercase)
  * `name`  — Display name (English)
  * `flag`  — Flag emoji for the dropdown
- * `allowed` — true for United States at launch
+ * `allowed` — true for Tanzania + Kenya at launch
  */
 
 export type Country = {
@@ -23,11 +23,10 @@ export type Country = {
 }
 
 // ─── Launch allowlist ──────────────────────────────────────────────────────
-// United States (Portland, Oregon) passes through to /verify.
+// Tanzania + Kenya pass through to /verify.
 // To open a new country, flip `allowed` to true here (and update middleware
 // / verify logic if a region check is added later).
-// TZ + ZA = Coming soon (code is generic, just flip the flag to re-enable).
-const ALLOWED_CODES = new Set<string>(["US"])
+const ALLOWED_CODES = new Set<string>(["TZ", "KE"])
 
 // ─── Raw country data (alpha-2 code → display name) ────────────────────────
 // All 54 African countries + major world countries. Sorted alphabetically
@@ -174,7 +173,7 @@ export const COUNTRIES: readonly Country[] = RAW_COUNTRIES.map(([code, name]) =>
 
 // ─── Convenience helpers ────────────────────────────────────────────────────
 
-/** Countries currently allowed through the gate (launch: United States / Portland). */
+/** Countries currently allowed through the gate (launch: Tanzania + Kenya). */
 export const ALLOWED_COUNTRIES: readonly Country[] = COUNTRIES.filter((c) => c.allowed)
 
 /** Look up a country by its ISO alpha-2 code. Returns undefined if not found. */

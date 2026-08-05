@@ -29,7 +29,7 @@ interface DistrictSelectorProps {
 /**
  * Phase 3.4 — District selector.
  * Shows districts based on the user's country (country isolation).
- * ZA users see Cape Town (8). TZ users see Dar es Salaam (5).
+ * TZ users see Tanzania districts (31). KE users see Kenya districts (47).
  */
 export function DistrictSelector({ value, onChange }: DistrictSelectorProps) {
   const [districts, setDistricts] = useState<District[]>([])
@@ -61,8 +61,8 @@ export function DistrictSelector({ value, onChange }: DistrictSelectorProps) {
   }, {} as Record<string, typeof districts>)
 
   const countryLabels: Record<string, string> = {
-    'South Africa': '🇿🇦 Cape Town, South Africa',
-    'Tanzania': '🇹🇿 Dar es Salaam, Tanzania',
+    'Tanzania': '🇹🇿 Tanzania',
+    'Kenya': '🇰🇪 Kenya',
   }
 
   return (

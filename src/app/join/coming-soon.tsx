@@ -5,7 +5,7 @@ import { LogOut, Clock } from 'lucide-react'
 
 /**
  * ComingSoon — shown when a user selects a country that is NOT yet allowed
- * through the Lellina gate (i.e. anything other than United States / Portland).
+ * through the Lellina gate (i.e. anything other than Tanzania / Kenya).
  *
  * ZERO data is stored for these users:
  *   - No email collection
@@ -42,7 +42,7 @@ export function ComingSoon({ countryName }: { countryName: string }) {
 
       {/* Body — cream/70 on dark */}
       <p className="mt-3 text-center font-body text-sm sm:text-base text-cream/70 leading-relaxed">
-        We&apos;re starting in Portland, Oregon. We&apos;ll open{' '}
+        We&apos;re starting in Tanzania & Kenya. We&apos;ll open{' '}
         <span className="font-semibold text-warm-rose-light">{countryName}</span>{' '}
         when the time is right. Please check back later.
       </p>

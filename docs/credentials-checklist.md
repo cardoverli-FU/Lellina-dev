@@ -71,5 +71,5 @@ git config user.email "300794432+cardoverli-FU@users.noreply.github.com"
 
 - Gemini API may be region-blocked in some countries. Backend calls from Render.com (US/EU servers) should work fine.
 - Payment gateway decision needed before Phase 10. Options: Lemon Squeezy (recommended — Merchant of Record, no business registration needed), PayFast, or in-app purchases.
-- Lelly Pass pricing: $7.50 USD/month (standard). Founding member price: $5.50 USD one-time for first 500 users. (Pre-pivot this was R135/month in South African Rand — Portland pivot moved V1 to USD-primary.)
+- Lelly Pass pricing: $7.50 USD/month (standard). Founding member price: $5.50 USD one-time for first 500 users. (Pre-pivot this was R135/month in South African Rand — Tanzania + Kenya pivot moved V1 to USD-primary.)
 - Database: Prisma ORM with SQLite for development.
