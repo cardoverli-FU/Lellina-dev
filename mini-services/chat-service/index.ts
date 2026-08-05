@@ -32,25 +32,67 @@ import { Server, Socket } from 'socket.io'
 import jwt from 'jsonwebtoken'
 import { PrismaClient } from '@prisma/client'
 
-const PORT = 3003
+// Render assigns PORT dynamically. Sandbox uses 3003.
+const PORT = Number(process.env.PORT) || 3003
 const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET!
+
+// Comma-separated list of allowed origins for CORS (the main Lellina app URLs).
+// In sandbox, the gateway handles origin so we allow all.
+// In production (Render), set CHAT_ALLOWED_ORIGINS=https://lellina-dev.onrender.com
+const ALLOWED_ORIGINS = process.env.CHAT_ALLOWED_ORIGINS
+  ? process.env.CHAT_ALLOWED_ORIGINS.split(',').map((s) => s.trim())
+  : null // null = allow all (sandbox mode)
+
+// Socket.io path — use standard '/socket.io/' in ALL environments.
+// The gateway forwards the full URL including path, so /socket.io/ works.
+const SOCKET_PATH = '/socket.io/'
 
 if (!NEXTAUTH_SECRET) {
   console.error('[chat-service] FATAL: NEXTAUTH_SECRET is not set')
   process.exit(1)
 }
 
+console.log('[chat-service] config:', {
+  PORT,
+  SOCKET_PATH,
+  ALLOWED_ORIGINS: ALLOWED_ORIGINS || 'ALL (sandbox)',
+  DATABASE_URL: process.env.DATABASE_URL ? 'set' : 'NOT SET',
+})
+
 const db = new PrismaClient({
   log: ['error', 'warn'],
 })
 
-const httpServer = createServer()
+// Minimal HTTP handler — Render needs a health check endpoint.
+// When socket.io path is '/', it intercepts ALL requests to the server.
+// To make /health work in sandbox mode, we MUST use a different path for
+// socket.io. We use '/socket.io/' in ALL environments (standard).
+// In sandbox, the gateway forwards /?XTransformPort=3003 → port 3003,
+// and the client connects with path '/socket.io/'.
+// The gateway does NOT strip the path — it forwards the full URL.
+// So /socket.io/?EIO=4&...&XTransformPort=3003 → port 3003 /socket.io/?EIO=4&...
+const httpServer = createServer((req, res) => {
+  // Parse URL without query string for matching
+  const fullUrl = req.url || '/'
+  const url = fullUrl.split('?')[0]
+  // Health check endpoint for Render (works with or without query params)
+  if (url === '/health' || url === '/') {
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify({ ok: true, service: 'lellina-chat', port: PORT }))
+    return
+  }
+  // Socket.io handles /socket.io/* automatically.
+  // Anything else → 404.
+  res.writeHead(404, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify({ error: 'Not found' }))
+})
 
 const io = new Server(httpServer, {
-  // Caddy forwards to port 3003 with path / — DO NOT change.
-  path: '/',
+  // Sandbox: path '/' (Caddy gateway forwards / to port 3003).
+  // Production: path '/socket.io/' (standard, direct connection).
+  path: SOCKET_PATH,
   cors: {
-    origin: true, // allow all origins (gateway handles security)
+    origin: ALLOWED_ORIGINS || true,
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -524,6 +566,7 @@ io.on('connection', (socket: Socket) => {
 // ─── Start ───
 httpServer.listen(PORT, () => {
   console.log(`[chat-service] Socket.io listening on port ${PORT}`)
+  console.log(`[chat-service] Health check: http://localhost:${PORT}/health`)
 })
 
 // ─── Graceful shutdown ───

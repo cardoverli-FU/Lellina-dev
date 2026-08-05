@@ -3,7 +3,17 @@
 // ════════════════════════════════════════════════════════════════════
 //  Phase 5.1 — Socket.io Client + React Hooks
 //
-//  Connection: io("/?XTransformPort=3003") — gateway routes to chat-service.
+//  CONNECTION STRATEGY (auto-detects environment):
+//
+//  PRODUCTION (Render):
+//    NEXT_PUBLIC_CHAT_SERVICE_URL is set → connect directly to that URL.
+//    e.g. io("https://lellina-chat.onrender.com", { path: "/socket.io/" })
+//    CORS handled by chat-service (CHAT_ALLOWED_ORIGINS env var).
+//
+//  SANDBOX (dev):
+//    NEXT_PUBLIC_CHAT_SERVICE_URL is NOT set → use gateway pattern.
+//    io("/?XTransformPort=3003") — Caddy forwards to port 3003.
+//
 //  Auth: fetches a short-lived JWT from /api/chat/token, passes in handshake.
 //
 //  Hooks:
@@ -16,6 +26,37 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 
 let socketPromise: Promise<Socket | null> | null = null
 
+/** Build the socket connection options based on environment. */
+function getSocketConfig(): { url: string; options: Record<string, unknown> } {
+  const chatServiceUrl = process.env.NEXT_PUBLIC_CHAT_SERVICE_URL
+
+  if (chatServiceUrl) {
+    // PRODUCTION: connect directly to chat-service URL on Render.
+    // Server uses standard '/socket.io/' path.
+    return {
+      url: chatServiceUrl,
+      options: {
+        path: '/socket.io/',
+        transports: ['websocket', 'polling'],
+      },
+    }
+  }
+
+  // SANDBOX: use gateway pattern. Caddy routes ?XTransformPort=3003 → port 3003.
+  // URL is relative ('') — browser uses current origin (localhost:81 gateway).
+  // XTransformPort is passed as query param so Caddy forwards to port 3003.
+  // path: '/socket.io/' — socket.io appends this to the URL for its requests.
+  // Final request: GET /socket.io/?EIO=4&transport=polling&XTransformPort=3003
+  // Caddy sees XTransformPort=3003 → forwards to localhost:3003/socket.io/?EIO=4&...
+  return {
+    url: '/?XTransformPort=3003',
+    options: {
+      path: '/socket.io/',
+      transports: ['websocket', 'polling'],
+    },
+  }
+}
+
 /** Fetch a chat token and connect to the socket service. Singleton. */
 export function getSocket(): Promise<Socket | null> {
   if (socketPromise) return socketPromise
@@ -27,12 +68,11 @@ export function getSocket(): Promise<Socket | null> {
       const { token } = await res.json()
       if (!token) return null
 
-      // Match the working example pattern: io('/?XTransformPort=3003').
-      // The URI path '/' becomes the socket.io path (server also uses path: '/').
-      // Caddy routes via the XTransformPort query param → port 3003.
-      const socket = io('/?XTransformPort=3003', {
+      const { url, options } = getSocketConfig()
+
+      const socket = io(url, {
+        ...options,
         auth: { token },
-        transports: ['websocket', 'polling'],
         reconnection: true,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,

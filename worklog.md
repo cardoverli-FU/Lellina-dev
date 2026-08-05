@@ -242,3 +242,58 @@ Stage Summary:
 - Chat-service: running on port 3003 (socket.io)
 - DB: 7 new tables (ChatRequest, Conversation, Message, HandleRequest, GhostNudge, GhostFlag, GhostRedemption)
 - Ready to push to GitHub → Render auto-deploy
+
+---
+Task ID: P5-CHAT-DEPLOY
+Agent: main (Z.ai Code)
+Task: Deploy chat-service to Render (user feedback: "why we dont deploy that chat service")
+
+Work Log:
+- User pushed back: "render has persistent storage so why we dont deploy that chat service bro why???"
+- Root cause analysis: chat-service was sandbox-only (port 3003, hardcoded). No render.yaml entry for it.
+- Updated chat-service/index.ts:
+  - PORT now reads from process.env.PORT (Render assigns dynamically) || 3003 (sandbox)
+  - Added CHAT_ALLOWED_ORIGINS env var for CORS (comma-separated, sandbox = allow all)
+  - Added /health endpoint for Render health checks
+  - Standardized socket.io path to /socket.io/ (works in both sandbox gateway + production direct)
+  - HTTP handler parses URL without query string for matching
+- Updated chat-service/package.json:
+  - Removed sandbox-specific DATABASE_URL override from dev script
+  - Kept start script as `bun index.ts` (Render runs this)
+- Updated src/lib/socket-client.ts:
+  - Auto-detects environment via NEXT_PUBLIC_CHAT_SERVICE_URL env var
+  - PRODUCTION: connects directly to chat-service URL (https://lellina-chat.onrender.com) with path /socket.io/
+  - SANDBOX: uses gateway pattern io('/?XTransformPort=3003') with path /socket.io/
+  - Caddy gateway forwards /socket.io/?...&XTransformPort=3003 → localhost:3003/socket.io/?...
+- Updated render.yaml:
+  - Added SECOND web service: lellina-chat (bun runtime, free plan)
+  - rootDir: mini-services/chat-service
+  - buildCommand: echo "No build needed — Bun runs TypeScript directly"
+  - startCommand: bun index.ts
+  - healthCheckPath: /health
+  - envVars: NEXTAUTH_SECRET (sync from main app), CHAT_ALLOWED_ORIGINS (main app URL), DATABASE_URL, NODE_ENV
+  - Added NEXT_PUBLIC_CHAT_SERVICE_URL to main app env vars (set in Render dashboard to https://lellina-chat.onrender.com)
+- Added next.config.ts webpack config:
+  - modern-face-api imports node:fs which breaks webpack client build
+  - Added resolve.fallback for fs, path, os, node:fs, node:path, node:os → false
+  - Added modern-face-api to externals in client build
+  - Added eslint.ignoreDuringBuilds: true (lint runs separately, not in build)
+- Created .zscripts/chat.sh — persistent chat-service launcher (setsid + nohup + disown)
+- Browser-verified end-to-end:
+  - Login as admin (cardoverli) → sent chat request to Achieng ✅
+  - Login as Achieng (achieng_msa / demo_no_login_123) → saw request ✅
+  - Accepted request → conversation ACTIVE ✅
+  - Sent "Hi! Testing the chat. Asante! 💛" → message saved to DB + displayed ✅
+  - Chat-service log shows connect/disconnect events ✅
+  - DB has 3 messages (SYSTEM + 2 TEXT) ✅
+
+Stage Summary:
+- chat-service now deploys to Render as a SECOND web service (bun runtime)
+- Socket.io connects in production via NEXT_PUBLIC_CHAT_SERVICE_URL
+- Socket.io connects in sandbox via gateway (?XTransformPort=3003)
+- Health check endpoint /health works in both environments
+- CORS configurable via CHAT_ALLOWED_ORIGINS
+- Build passes (webpack, Turbopack still has React 19 bug)
+- Lint: 0 errors, 3 warnings
+- Chat flow verified end-to-end in browser
+- Ready to push to GitHub → Render auto-deploys BOTH services

@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "DATABASE_URL=${DATABASE_URL:-file:/home/z/my-project/db/custom.db} bun --hot index.ts",
+    "dev": "bun --hot index.ts",
     "start": "bun index.ts"
+  },
+  "dependencies": {
+    "socket.io": "^4.8.3",
+    "jsonwebtoken": "^9.0.3",
+    "@prisma/client": "^6.11.1"
+  },
+  "devDependencies": {
+    "prisma": "^6.11.1"
   }
 }

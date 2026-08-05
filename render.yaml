@@ -1,6 +1,10 @@
 # Render.com deployment config for Lellina
 # Safe to commit — contains NO secrets (all env values set in dashboard).
 #
+# TWO SERVICES:
+#   1. lellina-dev       — Next.js app (Node runtime, port from Render)
+#   2. lellina-chat      — Socket.io chat-service (Bun runtime, port from Render)
+#
 # Database strategy (SIMPLE WAY — no Turso yet):
 #   SQLite on the EPHEMERAL filesystem (file:./db/custom.db).
 #   Render free plan does NOT offer persistent disks anymore.
@@ -8,21 +12,31 @@
 #   so the DB is recreated from scratch on each cold start.
 #   User data is NOT persisted between restarts — acceptable for dev/preview.
 #   Turso (libsql) will replace this when finalizing for production.
+#
+# NOTE: Both services get their own ephemeral DB on free plan.
+#   For chat to work end-to-end, both services must share a DB.
+#   On free plan, the Next.js app owns the DB (seeded on boot).
+#   The chat-service connects to the same DB URL (Turso) OR runs
+#   against its own DB (chat messages won't persist between services).
+#   FOR NOW: chat-service runs against its own ephemeral DB —
+#   real-time messaging works during a session, history may differ.
+#   FIX: Set TURSO_DATABASE_URL on BOTH services to share one DB.
 
 services:
+  # ─── SERVICE 1: Next.js App ───────────────────────────────────────
   - type: web
     name: lellina-dev
     runtime: node
     plan: free
     region: oregon
     branch: main
+    rootDir: .
     # npm install runs automatically before buildCommand.
     # package-lock.json ensures npm is used (not yarn/bun).
     buildCommand: npm run build
     startCommand: npm run start
     healthCheckPath: /api/exchange-rate
     autoDeploy: true
-    # NO disk block — Render free plan does not support persistent disks.
     envVars:
       # All values set in Render dashboard (batch paste from the list below).
       # sync: false = the value is NOT read from this file; it's a dashboard secret.
@@ -66,3 +80,38 @@ services:
       # This makes `npm install` behave like `--legacy-peer-deps` (same as bun).
       - key: NPM_CONFIG_LEGACY_PEER_DEPS
         value: "true"
+      # ─── Chat Service URL (for socket-client.ts to connect to) ───
+      # Set this in Render dashboard to the chat-service's public URL:
+      #   https://lellina-chat.onrender.com
+      # If not set, the app falls back to sandbox gateway pattern (?XTransformPort=3003).
+      - key: NEXT_PUBLIC_CHAT_SERVICE_URL
+        sync: false
+
+  # ─── SERVICE 2: Socket.io Chat Service ────────────────────────────
+  - type: web
+    name: lellina-chat
+    runtime: bun
+    plan: free
+    region: oregon
+    branch: main
+    rootDir: mini-services/chat-service
+    # Bun installs from package.json automatically. No build step needed.
+    buildCommand: echo "No build needed — Bun runs TypeScript directly"
+    startCommand: bun index.ts
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      # Must match the Next.js app's NEXTAUTH_SECRET (for JWT verification).
+      - key: NEXTAUTH_SECRET
+        sync: false
+      # Comma-separated list of allowed origins for CORS.
+      # Set to the Next.js app's URL: https://lellina-dev.onrender.com
+      - key: CHAT_ALLOWED_ORIGINS
+        sync: false
+      # Database URL — must match the Next.js app's DB for shared data.
+      # On free plan, each service has its own ephemeral DB.
+      # Set TURSO_DATABASE_URL on BOTH services to share one DB.
+      - key: DATABASE_URL
+        value: file:./db/lellina.db
+      - key: NODE_ENV
+        value: production
