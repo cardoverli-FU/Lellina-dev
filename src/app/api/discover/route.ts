@@ -48,9 +48,15 @@ export async function GET(req: NextRequest) {
       { userId: { not: user.id } },
     ]
 
-    // Country isolation: non-admin users see only their country's profiles
-    if (user.country && user.role !== 'ADMIN') {
-      conditions.push({ user: { country: user.country } })
+    // HARD Country isolation: TZ sees ONLY TZ profiles. KE sees ONLY KE.
+    // Never mixed. Never cross-country. Admin sees all.
+    if (user.role !== 'ADMIN') {
+      if (user.country) {
+        conditions.push({ user: { country: user.country } })
+      } else {
+        // No country on user — return empty (shouldn't happen, but safety)
+        return NextResponse.json({ profiles: [], hasMore: false, page, total: 0 })
+      }
     }
 
     // Verified filter

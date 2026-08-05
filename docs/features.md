@@ -42,6 +42,14 @@
 
 ---
 
+## 🔒 HARD COUNTRY ISOLATION
+
+> **TZ users NEVER see anything about Kenya. KE users NEVER see anything about Tanzania.**
+> District filters, discover, groups, profiles — ALL country-isolated.
+> The API enforces this. **Never mixed. Never cross-country.**
+
+---
+
 ## 🌍 PROJECT OVERVIEW
 
 | Field | Value |
@@ -359,7 +367,7 @@ Four tabs. Always visible. Bottom navigation on mobile. Side navigation on deskt
 - Users can send pictures in group chat.
 - Built on Socket.io with room support.
 - Auto-groups by district + tribe tag.
-- Reactions, @mentions, typing indicators, read receipts, group moderation, invite links.
+- Reactions, @mentions, typing indicators, read receipts, group moderation. No invite links. Lelly Pass = auto-access. Groups open automatically for Lelly Pass holders in their country.
 
 | Feature | Details |
 |---|---|
@@ -374,8 +382,9 @@ Four tabs. Always visible. Bottom navigation on mobile. Side navigation on deskt
 | Typing indicators | See when others are typing. |
 | Read receipts | See who read your message. |
 | Group moderation | Group creators can moderate members and messages. |
-| Invite links | Share invite links to join groups. |
+| Lelly Pass auto-access | No invite links. Lelly Pass = auto-access. Groups open automatically for Lelly Pass holders in their country. |
 | Report button | Report inappropriate groups or messages. |
+| Country isolation | Groups are country-isolated: TZ users see only TZ groups, KE users see only KE groups. |
 | Group API | RESTful API + database model for groups. Built on Socket.io with room support. |
 
 **Group Data Model:**
@@ -488,6 +497,7 @@ Group {
 | Street tag | Free text. Neighborhood-level. |
 | Seed data | All 78 districts pre-seeded in database (31 TZ + 47 KE). |
 | Filtering | Discover grid filters by district. Groups filter by district. |
+| Country isolation | District filter is country-isolated: TZ users see only 31 Tanzania regions, KE users see only 47 Kenya counties. Never mixed. |
 
 **Districts (Seed Data):**
 

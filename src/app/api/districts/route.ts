@@ -1,12 +1,10 @@
 // ════════════════════════════════════════════════════════════════════
 //  Lellina — Districts API (Phase 3 + Phase 4A country isolation)
-//  GET /api/districts           → districts for the current user's country
-//  GET /api/districts?country=TZ → districts for a specific country
-//  GET /api/districts?country=all → all districts+KE (admin/reference)
+//  HARD ISOLATION: TZ users see ONLY TZ districts. KE users see ONLY KE.
+//  Never mixed. Never cross-country.
 //
-//  Country isolation: TZ users see only Tanzania districts (31).
-//                      KE users see only Kenya districts (47).
-//                      Never mixed.
+//  GET /api/districts           → districts for the current user's country ONLY
+//  GET /api/districts?country=all → all districts (ADMIN ONLY)
 // ════════════════════════════════════════════════════════════════════
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -19,26 +17,51 @@ const COUNTRY_MAP: Record<string, string> = {
   KE: 'Kenya',
 }
 
-export async function GET2(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url)
     const queryCountry = url.searchParams.get('country')
+    const user = await getCurrentUser()
 
     let countryName: string | undefined
 
     if (queryCountry && queryCountry.toLowerCase() === 'all') {
-      // Explicit "all" — return every district (admin/reference only)
-      countryName = undefined
+      // "all" — ADMIN ONLY. Regular users NEVER see cross-country districts.
+      if (user?.role !== 'ADMIN') {
+        // Non-admin requesting "all" → force to their own country
+        if (user?.country) {
+          countryName = COUNTRY_MAP[user.country]
+        } else {
+          // No session and no country → return empty (not all!)
+          return NextResponse.json({ districts: [] })
+        }
+      }
+      // Admin gets all districts
     } else if (queryCountry) {
-      // Explicit country code (e.g. ?country=TZ)
-      countryName = COUNTRY_MAP[queryCountry.toUpperCase()] || queryCountry
+      // Explicit country code — but enforce: user can ONLY request their own country
+      const requestedName = COUNTRY_MAP[queryCountry.toUpperCase()]
+      if (user?.role === 'ADMIN') {
+        // Admin can request any country
+        countryName = requestedName || queryCountry
+      } else if (user?.country && COUNTRY_MAP[user.country] === requestedName) {
+        // Regular user requesting their own country — allowed
+        countryName = requestedName
+      } else {
+        // Regular user requesting a DIFFERENT country — DENIED
+        // Force to their own country instead
+        countryName = user?.country ? COUNTRY_MAP[user.country] : undefined
+        if (!countryName) {
+          return NextResponse.json({ districts: [] })
+        }
+      }
     } else {
-      // No query param — read from session (country isolation)
-      const user = await getCurrentUser()
+      // No query param — read from session (HARD country isolation)
       if (user?.country) {
         countryName = COUNTRY_MAP[user.country]
+      } else {
+        // No session or no country → return empty, NEVER all
+        return NextResponse.json({ districts: [] })
       }
-      // If no session or no country on user, return all (public reference)
     }
 
     const districts = await db.district.findMany({
@@ -51,8 +74,4 @@ export async function GET2(req: NextRequest) {
     console.error('[api/districts] Error:', error)
     return NextResponse.json({ error: 'Failed to fetch districts' }, { status: 500 })
   }
-}
-
-export async function GET(req: NextRequest) {
-  return GET2(req)
 }

@@ -387,16 +387,20 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 
 ### Phase 6: Group Chat — Premium Feature  ☐ NEXT
 
-**Goal:** Community group chat rooms where verified women connect by district, interest, and tribe tags. **Lelly Pass required** to create and fully participate in groups. Free users can view groups but can't post. Users can send pictures in group chat. Built on open-source Socket.io with room support.
+**Goal:** Community group chat rooms where verified women connect by district and tribe tags — **within their own country only**. **Lelly Pass required** to create and fully participate in groups. **No invite links. No sharing.** If a user has Lelly Pass, groups open automatically for them — no link needed. Free users can view groups but can't post. Users can send pictures in group chat. Built on open-source Socket.io with room support.
 
 > **Why Group Chat in V1:** Community is the #1 retention driver. Group chat lets women find their people BEFORE 1-on-1 dating. It's the social glue that keeps Lellina alive between matches. Premium gating (Lelly Pass) makes it a revenue driver from day one.
+>
+> **HARD COUNTRY ISOLATION:** TZ users see ONLY TZ groups. KE users see ONLY KE groups. Never mixed. Never cross-country. Groups are scoped to the user's country — auto-groups by district and tribe tag are created per country.
+>
+> **No Invite Links:** Groups are NOT shareable via link. Lelly Pass holders get automatic access to all groups in their country. Free users see groups but can't post. This prevents non-verified outsiders from sneaking in.
 >
 > **Open-Source Stack:** Socket.io (already in Phase 5) + `stream-chat-react` UI components (Apache-2.0, production-grade chat UI) OR custom UI on top of Socket.io rooms. No vendor lock-in.
 
 | # | Task | Status | File Route |
 |---|------|--------|------------|
 | 6.1 | Group chat page + UI | ☐ | `src/app/groups/page.tsx` |
-| 6.2 | Group list — browse by district, tribe tag, or "All" | ☐ | `src/components/groups/GroupList.tsx` |
+| 6.2 | Group list — browse by district or tribe tag (country-isolated: TZ sees only TZ groups, KE sees only KE) | ☐ | `src/components/groups/GroupList.tsx` |
 | 6.3 | Group creation — Lelly Pass ONLY (name, description, district, tribe tag, max members, isPrivate) | ☐ | `src/app/groups/create/page.tsx` |
 | 6.4 | Group join (free users can view, Lelly Pass to post) | ☐ | `src/app/api/groups/join/route.ts` |
 | 6.5 | Group chat room — real-time messages via Socket.io rooms | ☐ | `src/components/groups/GroupChatRoom.tsx` |
@@ -408,15 +412,16 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 | 6.11 | Group message search (search within a group's messages) | ☐ | `src/components/groups/GroupSearch.tsx` |
 | 6.12 | Group notification settings (mute, mentions only, all) | ☐ | `src/components/groups/GroupNotifSettings.tsx` |
 | 6.13 | @mention support in group messages | ☐ | `src/components/groups/MentionSupport.tsx` |
-| 6.14 | Group invite link (shareable link to join) | ☐ | `src/app/api/groups/invite/route.ts` |
-| 6.15 | Group report + moderation (report messages, group admin can delete) | ☐ | `src/app/api/groups/report/route.ts` |
+| 6.14 | Group report + moderation (report messages, group admin can delete) | ☐ | `src/app/api/groups/report/route.ts` |
+| 6.15 | **Lelly Pass = auto-access** — No invite links, no sharing. Lelly Pass holders automatically see and access all groups in their country. Groups open instantly — no link to click | ☐ | `src/lib/group-gating.ts` |
 | 6.16 | **Lelly Pass gating** — Free: view groups + messages (blurred photos), can't post. Lelly: full access (post, send pics, create groups, @mention, reactions) | ☐ | `src/lib/group-gating.ts` |
-| 6.17 | Group database model (Group, GroupMember, GroupMessage) | ☐ | `prisma/schema.prisma` |
-| 6.18 | Group API routes (CRUD + messaging) | ☐ | `src/app/api/groups/route.ts` |
-| 6.19 | Auto-groups — system-created groups by district (e.g. "Dar es Salaam Galz", "Nairobi Queer Scene") + by tribe tag | ☐ | `prisma/seed.ts` (auto-group section) |
-| 6.20 | Group chat intercept — Free user tries to post → "Secure your Lelly Pass to join the conversation" | ☐ | `src/components/groups/GroupIntercept.tsx` |
+| 6.17 | **Hard country isolation** — TZ users see ONLY TZ groups. KE users see ONLY KE groups. Groups API enforces `country` filter from session. Never mixed | ☐ | `src/app/api/groups/route.ts` (country isolation) |
+| 6.18 | Group database model (Group, GroupMember, GroupMessage — all have `country` field for isolation) | ☐ | `prisma/schema.prisma` |
+| 6.19 | Group API routes (CRUD + messaging, country-isolated) | ☐ | `src/app/api/groups/route.ts` |
+| 6.20 | Auto-groups — system-created groups per country by district (e.g. 🇹🇿 "Dar es Salaam Galz", 🇰🇪 "Nairobi Queer Scene") + by tribe tag | ☐ | `prisma/seed.ts` (auto-group section) |
+| 6.21 | Group chat intercept — Free user tries to post → "Secure your Lelly Pass to join the conversation" | ☐ | `src/components/groups/GroupIntercept.tsx` |
 
-**Phase 6 Exit Criteria:** Group chat works end-to-end. Lelly Pass gating enforced (free view, Lelly post). Pictures can be sent in groups. Socket.io rooms power real-time messaging. Auto-groups created for each district + tribe tag. Reactions, @mentions, typing indicators, read receipts all work. Group moderation works. Intercept messaging is psychological (not transactional).
+**Phase 6 Exit Criteria:** Group chat works end-to-end. **Hard country isolation enforced: TZ sees only TZ groups, KE sees only KE groups — NEVER mixed.** **No invite links.** Lelly Pass = auto-access (groups open automatically for Lelly holders). Lelly Pass gating enforced (free view, Lelly post). Pictures can be sent in groups. Socket.io rooms power real-time messaging. Auto-groups created per country for each district + tribe tag. Reactions, @mentions, typing indicators, read receipts all work. Group moderation works. Intercept messaging is psychological (not transactional).
 
 ---
 
