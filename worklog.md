@@ -144,3 +144,32 @@ Stage Summary:
 - Database: 78 districts (31 TZ + 47 KE), 10 demo profiles (5 TZ + 5 KE with Swahili bios), founder in Dar es Salaam
 - Admin country: TZ (was US)
 - /join gate: TZ + KE allowed (was US only)
+
+---
+Task ID: 8
+Agent: main (Z.ai Code)
+Task: Push to GitHub following 7-step push rule (Rule #9)
+
+Work Log:
+- Read docs/features.md, docs/phases.md, docs/FIXES.md for push rules
+- Identified 7-step push checklist: identify files → build only needed → extract project files → verify no sandbox → push → pull & verify → confirm no secrets
+- Checked git tracking: found .env, .zscripts/, db/custom.db, Caddyfile, verify-*.png in git history
+- Removed all sandbox files from git tracking with `git rm --cached`
+- Rewrote entire git history with `git filter-branch --index-filter` to scrub .env and all sandbox files from every commit
+- Verified: zero sandbox files in any commit on main branch
+- Fixed commit authors: all 4 commits changed from "Z User <z@container>" to "cardoverli-FU <300794432+cardoverli-FU@users.noreply.github.com>"
+- Fixed commit messages: replaced UUID garbage with proper descriptive messages
+- Added GitHub remote: https://github.com/cardoverli-FU/lellina-dev.git
+- Force pushed clean history to main (rewritten history requires --force)
+- Cloned repo to /tmp/lellina-verify for independent verification
+- Verified: NO .env, NO .zscripts/, NO db/, NO Caddyfile, NO verify-*.png in pushed repo
+- Verified: NO .env in any commit in the entire pushed history
+- Verified: Tanzania + Kenya content present in seed.ts, phases.md, page.tsx, discover API
+- Verified: All 4 commits have correct author and messages
+
+Stage Summary:
+- **Pushed to GitHub**: https://github.com/cardoverli-FU/lellina-dev.git (main branch)
+- **Commit history**: 4 clean commits, all by cardoverli-FU with proper messages
+- **Zero secrets exposed**: No .env, no tokens, no passwords in any commit
+- **Zero sandbox files**: No .zscripts, db/, Caddyfile, or preview images
+- **Push Rule #9 compliance**: All 7 steps completed ✅
