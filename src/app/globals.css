@@ -6,8 +6,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-inter);
+  --font-display: var(--font-fraunces);
+  --font-body: var(--font-inter);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -25,6 +27,7 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -41,75 +44,96 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* ─── Lellina Premium Palette (4 core colors) ─── */
+  --color-warm-rose: #9D3B54;        /* deep rose — primary, high contrast on ivory */
+  --color-warm-rose-light: #D4889E;  /* medium rose — for DARK backgrounds only */
+  --color-warm-rose-dark: #7A2A3F;   /* deeper rose — hover states */
+  --color-warm-rose-deep: #5C1F30;   /* darkest rose */
+  --color-gold: #B8923D;             /* deeper gold — high contrast on ivory */
+  --color-gold-light: #D4AF37;       /* lighter gold — for DARK backgrounds */
+  --color-gold-deep: #8F7028;        /* deepest gold */
+  --color-off-white: #F7F4EF;        /* warm ivory — premium background */
+  --color-soft-charcoal: #1A1614;    /* espresso — max contrast text */
+  --color-charcoal-soft: #2D2520;    /* lighter espresso */
+  --color-sage: #5E7E55;             /* deeper sage */
+  --color-sage-light: #9DB896;       /* light sage for dark bg */
+  --color-warm-coral: #C44536;       /* deeper coral, use sparingly */
+  --color-blush: #F4E6E9;            /* very subtle rose tint bg */
+  --color-cream: #FAF6F0;            /* warm cream */
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.5rem;
+
+  /* Lellina Premium Light Theme — High contrast, warm ivory */
+  --background: #F7F4EF;
+  --foreground: #1A1614;
+  --card: #FFFFFF;
+  --card-foreground: #1A1614;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1614;
+  --primary: #9D3B54;
+  --primary-foreground: #FFFFFF;
+  --secondary: #B8923D;
+  --secondary-foreground: #FFFFFF;
+  --muted: #EDE8E0;
+  --muted-foreground: #5C5249;
+  --accent: #5E7E55;
+  --accent-foreground: #FFFFFF;
+  --destructive: #C44536;
+  --destructive-foreground: #FFFFFF;
+  --border: #D9D2C8;
+  --input: #D9D2C8;
+  --ring: #9D3B54;
+  --chart-1: #9D3B54;
+  --chart-2: #B8923D;
+  --chart-3: #5E7E55;
+  --chart-4: #C44536;
+  --chart-5: #2D2520;
+  --sidebar: #F7F4EF;
+  --sidebar-foreground: #1A1614;
+  --sidebar-primary: #9D3B54;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #EDE8E0;
+  --sidebar-accent-foreground: #1A1614;
+  --sidebar-border: #D9D2C8;
+  --sidebar-ring: #9D3B54;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #1A1614;
+  --foreground: #F7F4EF;
+  --card: #241F1C;
+  --card-foreground: #F7F4EF;
+  --popover: #241F1C;
+  --popover-foreground: #F7F4EF;
+  --primary: #D4889E;
+  --primary-foreground: #1A1614;
+  --secondary: #D4AF37;
+  --secondary-foreground: #1A1614;
+  --muted: #2D2520;
+  --muted-foreground: #A89E92;
+  --accent: #9DB896;
+  --accent-foreground: #1A1614;
+  --destructive: #C44536;
+  --destructive-foreground: #FFFFFF;
+  --border: #3A322C;
+  --input: #3A322C;
+  --ring: #D4889E;
+  --chart-1: #D4889E;
+  --chart-2: #D4AF37;
+  --chart-3: #9DB896;
+  --chart-4: #C44536;
+  --chart-5: #A89E92;
+  --sidebar: #1A1614;
+  --sidebar-foreground: #F7F4EF;
+  --sidebar-primary: #D4889E;
+  --sidebar-primary-foreground: #1A1614;
+  --sidebar-accent: #2D2520;
+  --sidebar-accent-foreground: #F7F4EF;
+  --sidebar-border: #3A322C;
+  --sidebar-ring: #D4889E;
 }
 
 @layer base {
@@ -118,5 +142,201 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "ss01", "cv01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+    letter-spacing: -0.025em;
+    font-optical-sizing: auto;
+  }
+}
+
+/* Custom scrollbar — subtle espresso */
+@layer base {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #EDE8E0;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #9D3B54;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #7A2A3F;
+  }
+  ::selection {
+    background: rgba(157, 59, 84, 0.2);
+    color: #1A1614;
+  }
+}
+
+/* ─── Lellina Premium Gradients (simplified to 3) ─── */
+.bg-hero-dark {
+  background: #14100E;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(157, 59, 84, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(184, 146, 61, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #14100E 0%, #1A1614 100%);
+}
+.bg-section-dark {
+  background: #14100E;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(157, 59, 84, 0.12) 0%, transparent 70%),
+    linear-gradient(180deg, #1A1614 0%, #14100E 100%);
+}
+.bg-ivory {
+  background: #F7F4EF;
+}
+.bg-cream-warm {
+  background: linear-gradient(180deg, #FAF6F0 0%, #F7F4EF 100%);
+}
+.bg-blush-subtle {
+  background: #F4E6E9;
+}
+
+/* ─── Text Effects ─── */
+.text-lellina-gradient {
+  background: linear-gradient(135deg, #9D3B54 0%, #7A2A3F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.text-gold-gradient {
+  background: linear-gradient(135deg, #B8923D 0%, #8F7028 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Glass Effect (for dark sections) ─── */
+.glass-dark {
+  background: rgba(247, 244, 239, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(247, 244, 239, 0.12);
+}
+
+/* ─── Animations (kept minimal, premium) ─── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-float { animation: float 7s ease-in-out infinite; }
+.animate-pulse-soft { animation: pulse-soft 3s ease-in-out infinite; }
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 4s ease-in-out infinite;
+}
+.animate-fade-in-up { animation: fadeInUp 0.7s ease-out forwards; }
+
+/* ─── Section Dividers ─── */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #D9D2C8, transparent);
+}
+
+/* ─── Sticky Footer Helpers (per Z.ai UX rule) ─── */
+.layout-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.layout-main {
+  flex: 1 0 auto;
+}
+.layout-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+/* ─── Mobile-safe tap targets ─── */
+@media (max-width: 640px) {
+  button, a {
+    min-height: 44px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   CONTRAST RULE (CRITICAL — read before writing any component)
+   ════════════════════════════════════════════════════════════════════
+   On DARK / DEEP backgrounds (bg-hero-dark, bg-section-dark, bg-soft-charcoal,
+   solid bg-warm-rose, bg-warm-rose-deep):
+     → Text MUST be bright: text-cream, text-white, text-gold-light, text-warm-rose-light
+     → NEVER use: text-soft-charcoal, text-warm-rose-dark, text-gold-deep, text-muted-foreground
+
+   On LIGHT backgrounds (bg-ivory, bg-cream-warm, bg-white, bg-blush-subtle, bg-off-white):
+     → Text MUST be dark: text-soft-charcoal, text-muted-foreground, text-warm-rose-dark
+     → NEVER use: text-cream, text-white (except on buttons)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ─── Brand Splash Screen ─── */
+.brand-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 40%, rgba(212, 175, 55, 0.12) 0%, transparent 70%),
+    linear-gradient(160deg, #5C1F30 0%, #7A2A3F 50%, #9D3B54 100%);
+  animation: splash-fade 1.8s ease-in-out forwards;
+  pointer-events: none;
+}
+.brand-splash-gone {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease-out, visibility 0.6s;
+}
+@keyframes splash-fade {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ─── Tab Bar ─── */
+.tab-bar {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Tab Panel transition ─── */
+.tab-panel-enter {
+  animation: tabPanelIn 0.4s ease-out forwards;
+}
+@keyframes tabPanelIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Deep Rose solid background (for splash, cards on dark) ─── */
+.bg-warm-rose-solid {
+  background: linear-gradient(160deg, #9D3B54 0%, #7A2A3F 100%);
 }

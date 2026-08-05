@@ -50,5 +50,41 @@ test
 prompt
 
 server.log
+# Local-only dev launcher (sandbox process reaper workaround)
+start-dev.sh
+# Preview screenshots (sandbox-only artifacts)
+preview-*.png
 # Skills directory
 /skills/
+
+# Tool call artifacts (junk from agent tool runs)
+/tool-results/
+# Old git backup (NEVER commit)
+.git.old/
+
+# ─── SANDBOX-ONLY FILES (Agent Rule #9 — NEVER push to GitHub) ───
+# These exist only in the dev sandbox, not part of the Lellina project.
+/.zscripts/
+/download/
+/examples/
+/mini-services/
+/tests/
+Caddyfile
+# Top-level db/ is a sandbox SQLite runtime file. Project DB lives at src/lib/db/
+/db/
+# Any stray SQLite database files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite-journal
+
+# Worklog — committed so fresh-cloned agents can read the build history.
+# (See docs/phases.md "Agent Rules" — next-phase prompt reads worklog.md at repo root.)
+# If you re-add sandbox noise here, sanitize it first (no tokens, no .env values).
+# worklog.md
+
+# Bun lockfile (sandbox-only — Render uses package-lock.json)
+bun.lock
+
+# Next-phase prompt (sandbox-only — contains API keys, tokens, passwords)
+NEXT-PHASE-PROMPT.md

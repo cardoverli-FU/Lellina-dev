@@ -1,8 +1,8 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// ════════════════════════════════════════════════════════════════════
+//  Lellina — Prisma Schema (Phase 2: Verification Gate + Registration)
+//  Galz for Galz — South Africa (Cape Town)
+//  NO MEN. NO BOTS. ONLY VERIFIED WOMEN.
+// ════════════════════════════════════════════════════════════════════
 
 generator client {
   provider = "prisma-client-js"
@@ -13,20 +13,332 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── User ───────────────────────────────────────────────────────────
+// Core account. Created AFTER verification passes. Admin bypasses gate
+// (isVerified=true at seed time). faceEmbedding + referencePhoto are
+// SYSTEM-ONLY — never exposed on discover/profile. Encrypted at rest.
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String    @id @default(cuid())
+  email           String    @unique
+  username        String?   @unique
+  passwordHash    String
+
+  // Verification state
+  isVerified      Boolean   @default(false)
+  verifiedAt      DateTime?
+  role            String    @default("USER") // "USER" | "ADMIN"
+
+  // Night-trap biometric reference (SYSTEM-ONLY, encrypted, never public)
+  // faceEmbedding = 128-dim Float vector as JSON string (encrypted)
+  faceEmbedding   String?
+  // referencePhoto = encrypted base64 blob (for admin appeal review)
+  referencePhoto  String?
+
+  // Country (set at /join, persisted at /register). Drives country isolation.
+  // TZ users see only TZ profiles/districts. ZA users see only ZA.
+  country         String?   // "ZA" | "TZ" | null (ISO alpha-2)
+
+  // Device + ban tracking
+  deviceFingerprint String?
+  bannedAt        DateTime?
+  banReason       String?
+
+  // Lelly Pass (Phase 7 — fields exist now, logic ships later)
+  lellyPassTier   String?   // "FOUNDING" | "STANDARD" | null
+  lellyPassAt     DateTime?
+
+  // Profile (1:1 — created during Phase 3 setup wizard)
+  profile         Profile?
+
+  // Verification attempts (1:N)
+  verificationAttempts VerificationAttempt[]
+
+  // Appeals submitted by this user (1:N)
+  appeals         Appeal[]
+
+  // Reports filed by this user (1:N)
+  reportsFiled    Report[]   @relation("ReporterReports")
+
+  // Admin audit log (1:N — admin actions taken)
+  adminActions    AdminAuditLog[] @relation("AdminActions")
+
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  lastLoginAt     DateTime?
+  lastNightCheck  DateTime?
+
+  // Like/Match relations (Phase 4)
+  likesGiven      Like[]    @relation("LikerLikes")
+  likesReceived   Like[]    @relation("LikedBy")
+  matchesA        Match[]   @relation("MatchA")
+  matchesB        Match[]   @relation("MatchB")
+
+  @@index([email])
+  @@index([deviceFingerprint])
+  @@index([role])
+  @@index([country])
 }
 
-model Post {
+// ─── Profile ────────────────────────────────────────────────────────
+// Public profile shown on discover. Created in Phase 3 setup wizard.
+// socialHandles hidden until mutual approval (Phase 5).
+
+model Profile {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  displayName     String?
+  age             Int?
+  bio             String?
+  // Photos stored as encrypted base64 or URLs (Phase 3)
+  photoUrls       String    @default("[]") // JSON array
+
+  // Location
+  districtId      String?
+  district        District? @relation(fields: [districtId], references: [id])
+  streetTag       String?   // neighborhood-level free text
+
+  // Tribe tags (up to 5) — stored as JSON array of tag IDs
+  tribeTags       String    @default("[]")
+
+  // Social handles (hidden until mutual approval — Phase 5)
+  telegram        String?
+  instagram       String?
+  signal          String?
+  otherSocial     String?   // Any other social media (TikTok, X, WhatsApp, etc.)
+
+  // Discover state
+  isOnline        Boolean   @default(false)
+  lastActiveAt    DateTime?
+  isFounder       Boolean   @default(false) // pinned first in discover
+
+  // Ghost-score infrastructure (Phase 4A stores, Phase 5 calculates dynamically)
+  // responseRateTier: shown as badge on every profile card.
+  // ghostScore: 0-100, lower = worse. Null until first reply pattern recorded.
+  responseRateTier String?  // "FAST" | "SLOW" | "GHOST" | "NEW"
+  ghostScore       Float?
+  ghostFlagCount   Int      @default(0)
+  lastReplyAt      DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([districtId])
+  @@index([isOnline])
+  @@index([isFounder])
+  @@index([responseRateTier])
+}
+
+// ─── District ───────────────────────────────────────────────────────
+// Location model. Seeded with Cape Town (8) at launch.
+// Expandable to new regions/countries as rollout continues.
+
+model District {
+  id              String    @id @default(cuid())
+  name            String    @unique
+  region          String    // e.g. "Cape Town"
+  country         String    // e.g. "South Africa"
+  areas           String    @default("[]") // JSON array of neighborhood names
+  profiles        Profile[]
+  createdAt       DateTime  @default(now())
+
+  @@index([country])
+  @@index([region])
+}
+
+// ─── TribeTag ───────────────────────────────────────────────────────
+// Identity/subculture tags. Up to 5 per profile. Seeded at init.
+
+model TribeTag {
+  id              String    @id @default(cuid())
+  name            String    @unique
+  category        String    // "IDENTITY" | "SUBCULTURE" | "SCENE"
+  createdAt       DateTime  @default(now())
+}
+
+// ─── VerificationAttempt ────────────────────────────────────────────
+// Tracks each verification try. 3 max per device (Phase 2.9).
+// NOTE: NO media stored here. Media is in-memory only, analyzed, discarded.
+// Only the verdict + per-cloud scores persist for audit.
+
+model VerificationAttempt {
+  id              String    @id @default(cuid())
+  userId          String?   // null if pre-registration (not yet a user)
+  user            User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  deviceFingerprint String
+  ipAddress       String
+
+  // Verdict: "PASS" | "BAN" | "MANUAL_REVIEW" | "PENDING"
+  verdict         String    @default("PENDING")
+
+  // Per-cloud scores (JSON — e.g. {"L2":"female:0.98","L3":"female:0.95","L4":"clean"})
+  cloudScores     String    @default("{}")
+
+  // Which steps completed
+  stepSelfie      Boolean   @default(false)
+  stepVoice       Boolean   @default(false)
+  stepVideo       Boolean   @default(false)
+  stepConsensus   Boolean   @default(false)
+
+  // Voice pitch (client-side, soft signal only)
+  voicePitchHz    Float?
+
+  // Video OCR code match
+  videoCodeMatch  Boolean?
+
+  failed          Boolean   @default(false)
+  failReason      String?
+
+  createdAt       DateTime  @default(now())
+
+  @@index([userId])
+  @@index([deviceFingerprint])
+  @@index([verdict])
+}
+
+// ─── Appeal ─────────────────────────────────────────────────────────
+// When a user is BANNED or sent to MANUAL_REVIEW, they can appeal.
+// Appeal media: encrypted, auto-deleted 7 days after review closes.
+
+model Appeal {
+  id              String    @id @default(cuid())
+  userId          String?
+  user            User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  deviceFingerprint String
+  ipAddress       String
+
+  // Original verification attempt that triggered the appeal
+  attemptId       String?
+
+  // Appeal media (encrypted base64 — auto-deleted 7 days post-review)
+  appealPhoto     String?
+  appealVoice     String?
+  appealVideo     String?
+
+  // User's message
+  userMessage     String?
+
+  // Review state: "PENDING" | "APPROVED" | "REJECTED" | "MORE_INFO" | "BANNED"
+  status          String    @default("PENDING")
+  adminNotes      String?
+  reviewedBy      String?   // admin userId
+  reviewedAt      DateTime?
+
+  // Auto-delete media after 7 days post-review
+  mediaDeleteAt   DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([status])
+  @@index([userId])
+}
+
+// ─── Report ─────────────────────────────────────────────────────────
+// Community moderation. Any user can report profiles, messages, events.
+// No auto-nudity block — community + admin handle moderation.
+
+model Report {
+  id              String    @id @default(cuid())
+  reporterId      String
+  reporter        User      @relation("ReporterReports", fields: [reporterId], references: [id], onDelete: Cascade)
+
+  // What's being reported: "PROFILE" | "MESSAGE" | "EVENT" | "PHOTO"
+  targetType      String
+  targetId        String
+
+  // "ILLEGAL" | "HARASSMENT" | "IMPERSONATION" | "SPAM" | "UNDERAGE" | "OTHER"
+  reason          String
+  description     String?
+
+  // Admin resolution: "PENDING" | "WARNED" | "SUSPENDED" | "BANNED" | "DISMISSED"
+  status          String    @default("PENDING")
+  adminNotes      String?
+  reviewedBy      String?
+  reviewedAt      DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([status])
+  @@index([targetType, targetId])
+}
+
+// ─── AdminAuditLog ──────────────────────────────────────────────────
+// Every admin action is logged. Approve appeal, ban user, dismiss report, etc.
+
+model AdminAuditLog {
+  id              String    @id @default(cuid())
+  adminId         String
+  admin           User      @relation("AdminActions", fields: [adminId], references: [id], onDelete: Cascade)
+
+  action          String    // "APPROVE_APPEAL" | "REJECT_APPEAL" | "BAN_DEVICE" | "WARN_USER" | etc.
+  targetType      String?   // "APPEAL" | "REPORT" | "USER"
+  targetId        String?
+  details         String?   // JSON blob with context
+
+  createdAt       DateTime  @default(now())
+
+  @@index([adminId])
+  @@index([action])
+}
+
+// ─── VerificationToken ──────────────────────────────────────────────
+// Issued by /verify on PASS. Required to access /register.
+// Single-use, expires in 10 minutes.
+
+model VerificationToken {
+  id              String    @id @default(cuid())
+  token           String    @unique
+  deviceFingerprint String
+  ipAddress       String
+  attemptId       String?
+
+  used            Boolean   @default(false)
+  expiresAt       DateTime
+  createdAt       DateTime  @default(now())
+
+  @@index([token])
+  @@index([deviceFingerprint])
+}
+
+// ─── Like (Phase 4.3) ───────────────────────────────────────────────
+// A like or pass action. One action per user-pair (unique constraint).
+// Mutual LIKE (A likes B + B likes A) → Match created atomically.
+
+model Like {
   id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
+  likerId   String
+  likedId   String
+  action    String   // "LIKE" | "PASS"
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  liker     User     @relation("LikerLikes", fields: [likerId], references: [id], onDelete: Cascade)
+  liked     User     @relation("LikedBy", fields: [likedId], references: [id], onDelete: Cascade)
+
+  @@unique([likerId, likedId])
+  @@index([likedId])
+  @@index([likerId])
+  @@index([action])
+}
+
+// ─── Match (Phase 4.3) ──────────────────────────────────────────────
+// Created atomically when two users LIKE each other.
+// userAId < userBId (lexicographic) to prevent duplicate matches.
+
+model Match {
+  id        String   @id @default(cuid())
+  userAId   String
+  userBId   String
+  createdAt DateTime @default(now())
+
+  userA     User     @relation("MatchA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB     User     @relation("MatchB", fields: [userBId], references: [id], onDelete: Cascade)
+
+  @@unique([userAId, userBId])
+  @@index([userAId])
+  @@index([userBId])
 }
