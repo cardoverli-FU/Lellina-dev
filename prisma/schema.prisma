@@ -75,6 +75,19 @@ model User {
   matchesA        Match[]   @relation("MatchA")
   matchesB        Match[]   @relation("MatchB")
 
+  // ─── Phase 5: Chat Engine relations ───
+  chatRequestsSent      ChatRequest[]    @relation("ChatReqFrom")
+  chatRequestsReceived  ChatRequest[]    @relation("ChatReqTo")
+  conversationsA        Conversation[]   @relation("ConvUserA")
+  conversationsB        Conversation[]   @relation("ConvUserB")
+  messagesSent          Message[]        @relation("MsgSender")
+  handleRequestsSent    HandleRequest[]  @relation("HandleReqFrom")
+  ghostFlagsReported    GhostFlag[]      @relation("GhostFlagReporter")
+  ghostFlagsAsGhost     GhostFlag[]      @relation("GhostFlagGhost")
+  ghostNudgesSent       GhostNudge[]     @relation("GhostNudgeSender")
+  ghostRedemption       GhostRedemption?
+  deletedMessages       Message[]        @relation("MsgDeleter")
+
   @@index([email])
   @@index([deviceFingerprint])
   @@index([role])
@@ -341,4 +354,174 @@ model Match {
   @@unique([userAId, userBId])
   @@index([userAId])
   @@index([userBId])
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  PHASE 5 — Chat Engine + Image Viewer + Anti-Ghosting
+//  Request-first model: A sends ChatRequest → B accepts → Conversation
+//  Free: 1 request/day, send pics (B receives blurred). Lelly: unlimited, unblurred, delete=ghost.
+// ════════════════════════════════════════════════════════════════════
+
+// ─── ChatRequest (Phase 5.8/5.9) ───────────────────────────────────
+// A request to START a conversation. Free = 1/day, Lelly = unlimited.
+// One active request per user-pair (unique). On ACCEPT → Conversation created.
+
+model ChatRequest {
+  id          String       @id @default(cuid())
+  fromId      String
+  toId        String
+  message     String?      // optional intro note (max 280 chars, enforced in API)
+  status      String       @default("PENDING") // "PENDING" | "ACCEPTED" | "DECLINED" | "EXPIRED"
+  createdAt   DateTime     @default(now())
+  respondedAt DateTime?
+  expiresAt   DateTime?    // auto-expire after 7 days if no response
+
+  from        User         @relation("ChatReqFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to          User         @relation("ChatReqTo", fields: [toId], references: [id], onDelete: Cascade)
+  conversation Conversation? // created on ACCEPT (1:1)
+
+  @@unique([fromId, toId])
+  @@index([toId, status])
+  @@index([fromId])
+  @@index([status])
+}
+
+// ─── Conversation (Phase 5.2) ──────────────────────────────────────
+// A 1:1 chat between two verified women. Created when a ChatRequest is ACCEPTED.
+// userAId < userBId (lexicographic) — prevents duplicate conversations.
+// Anti-ghosting: status tracks ACTIVE / CLOSED / EXITED.
+
+model Conversation {
+  id            String         @id @default(cuid())
+  userAId       String         // lexicographically smaller userId
+  userBId       String         // lexicographically larger userId
+  requestId     String?        @unique // the ChatRequest that created this conversation
+  status        String         @default("ACTIVE") // "ACTIVE" | "CLOSED" | "EXITED"
+  closedBy      String?        // userId of who closed it
+  exitReason    String?        // "NOT_FEELING_IT" | "GHOST_FLAG" | "MANUAL"
+  exitMessage   String?        // the kind exit message sent (for NOT_FEELING_IT)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  lastMessageAt DateTime?
+  lastMessagePreview String?   // last message text (for conversation list preview)
+  lastMessageSender String?    // userId of last sender
+
+  userA         User           @relation("ConvUserA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB         User           @relation("ConvUserB", fields: [userBId], references: [id], onDelete: Cascade)
+  request       ChatRequest?   @relation(fields: [requestId], references: [id])
+  messages      Message[]
+  handleRequests HandleRequest[]
+  ghostFlags    GhostFlag[]
+  ghostNudges   GhostNudge[]
+
+  @@unique([userAId, userBId])
+  @@index([userAId])
+  @@index([userBId])
+  @@index([status])
+  @@index([lastMessageAt])
+}
+
+// ─── Message (Phase 5.2/5.5/5.6/5.7) ───────────────────────────────
+// Individual chat message. Supports TEXT, PHOTO, SYSTEM, NOT_FEELING_IT, NUDGE.
+// Read receipts: deliveredAt (sent to recipient socket), readAt (recipient opened).
+// Photo blur: free recipients see blurred; Lelly recipients see unblurred.
+// Delete (Lelly only): soft-delete — sets deletedAt, content nulled, disappears for BOTH.
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String?      // text content (null if photo-only or deleted)
+  photoUrl       String?      // photo (URL or base64 — stored encrypted in prod)
+  photoWidth     Int?
+  photoHeight    Int?
+  type           String       @default("TEXT") // "TEXT" | "PHOTO" | "SYSTEM" | "NOT_FEELING_IT" | "NUDGE"
+  // Read receipts
+  deliveredAt    DateTime?
+  readAt         DateTime?
+  // Lelly delete = disappears for BOTH (soft delete, content wiped)
+  deletedById    String?
+  deletedAt      DateTime?
+  createdAt      DateTime     @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation("MsgSender", fields: [senderId], references: [id], onDelete: Cascade)
+  deleter        User?        @relation("MsgDeleter", fields: [deletedById], references: [id], onDelete: SetNull)
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
+  @@index([readAt])
+}
+
+// ─── HandleRequest (Phase 5.4) ─────────────────────────────────────
+// Social handles (Telegram/Instagram/Signal) are HIDDEN until mutual approval.
+// One user requests to share handles → other accepts → handles revealed to both.
+
+model HandleRequest {
+  id             String       @id @default(cuid())
+  conversationId String
+  fromId         String       // who initiated the handle request
+  status         String       @default("PENDING") // "PENDING" | "ACCEPTED" | "DECLINED"
+  createdAt      DateTime     @default(now())
+  respondedAt    DateTime?
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  from           User         @relation("HandleReqFrom", fields: [fromId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([status])
+}
+
+// ─── GhostNudge (Phase 5.15) ───────────────────────────────────────
+// After 3 days of silence in an ACTIVE conversation, the non-silent person can
+// send ONE nudge ("Still there? 👋"). Max 1 nudge per conversation per 3-day window.
+
+model GhostNudge {
+  id             String       @id @default(cuid())
+  conversationId String
+  sentBy         String       // the non-silent person
+  createdAt      DateTime     @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation("GhostNudgeSender", fields: [sentBy], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+}
+
+// ─── GhostFlag (Phase 5.17) ────────────────────────────────────────
+// After 7+ days of silence, the non-silent person can "Report Ghosting".
+// Accumulated flags → ghost reputation. Admin can warn/ban chronic ghosts.
+
+model GhostFlag {
+  id             String       @id @default(cuid())
+  conversationId String
+  reporterId     String       // who reported the ghost
+  ghostId        String       // who is being reported as a ghost
+  createdAt      DateTime     @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  reporter       User         @relation("GhostFlagReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  ghost          User         @relation("GhostFlagGhost", fields: [ghostId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, reporterId]) // one flag per conversation per reporter
+  @@index([ghostId])
+  @@index([conversationId])
+}
+
+// ─── GhostRedemption (Phase 5.18) ──────────────────────────────────
+// Tracks consecutive days a user replies within 24h.
+// 14 consecutive days → badge upgrades: GHOST → SLOW → FAST.
+// A single slow reply (>24h) resets the counter to 0.
+
+model GhostRedemption {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  consecutiveDays Int       @default(0)
+  lastFastReplyAt DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([consecutiveDays])
 }

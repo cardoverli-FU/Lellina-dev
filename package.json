@@ -66,6 +66,7 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.2",
     "input-otp": "^1.4.2",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.525.0",
     "modern-face-api": "0.22.5",
     "next": "^16.1.1",
@@ -84,6 +85,8 @@
     "react-syntax-highlighter": "^15.6.1",
     "recharts": "^2.15.4",
     "sharp": "^0.34.3",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
     "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4",
@@ -106,9 +109,14 @@
   "trustedDependencies": [
     "@google/genai",
     "@parcel/watcher",
+    "@prisma/client",
+    "@prisma/engines",
     "@swc/core",
     "es5-ext",
+    "esbuild",
+    "prisma",
     "protobufjs",
+    "sharp",
     "unrs-resolver"
   ]
 }

@@ -1,8 +1,11 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Heart, X, MapPin, BadgeCheck } from 'lucide-react'
+import { Heart, X, MapPin, BadgeCheck, MessageSquarePlus } from 'lucide-react'
+import { useState } from 'react'
 import { OnlineStatus } from './OnlineStatus'
+import { ChatRequestDialog } from '@/components/chat/ChatRequestDialog'
+import { GhostBadge } from '@/components/chat/GhostBadge'
 
 // ─── Types ───────────────────────────────────────────────────────────
 export interface DiscoverProfile {
@@ -29,12 +32,13 @@ interface ProfileCardProps {
 }
 
 /**
- * Phase 4.2 — Profile card for the discover grid.
+ * Phase 4.2 + 5.8 — Profile card for the discover grid.
  * Shows photo (or initials fallback), name, age, district, tribe tags,
- * online status, founder badge, and like/pass buttons.
+ * online status, founder badge, like/pass buttons, and chat request button.
  */
 export function ProfileCard({ profile, onLike, onPass, busy }: ProfileCardProps) {
   const initials = (profile.displayName || '?').charAt(0).toUpperCase()
+  const [chatOpen, setChatOpen] = useState(false)
 
   return (
     <motion.div
@@ -122,7 +126,12 @@ export function ProfileCard({ profile, onLike, onPass, busy }: ProfileCardProps)
           </div>
         )}
 
-        {/* Like / Pass buttons */}
+        {/* Ghost badge (response rate tier) */}
+        {profile.responseRateTier && (
+          <GhostBadge tier={profile.responseRateTier} />
+        )}
+
+        {/* Like / Pass / Chat buttons */}
         <div className="flex gap-2">
           <button
             onClick={() => onPass(profile.userId)}
@@ -140,8 +149,27 @@ export function ProfileCard({ profile, onLike, onPass, busy }: ProfileCardProps)
           >
             <Heart className="h-4 w-4 text-white" />
           </button>
+          <button
+            onClick={() => setChatOpen(true)}
+            disabled={busy}
+            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-gold/30 bg-gold/10 transition-all hover:border-gold/50 hover:bg-gold/20 hover:scale-[1.03] active:scale-95 disabled:opacity-50"
+            aria-label="Send chat request"
+            title="Send chat request"
+          >
+            <MessageSquarePlus className="h-4 w-4 text-gold-light" />
+          </button>
         </div>
       </div>
+
+      {/* Chat request dialog */}
+      <ChatRequestDialog
+        toUserId={profile.userId}
+        toUserName={profile.displayName || 'Anonymous'}
+        toUserPhoto={profile.photoUrls[0]}
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
+        onSent={() => {}}
+      />
     </motion.div>
   )
 }

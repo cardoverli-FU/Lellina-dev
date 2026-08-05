@@ -14,7 +14,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Discover', href: '/discover', icon: Compass, enabled: true },
-  { label: 'Chat', href: '/chat', icon: MessageCircle, enabled: false },
+  { label: 'Chat', href: '/chat', icon: MessageCircle, enabled: true },
   { label: 'Groups', href: '/groups', icon: Users, enabled: false },
   { label: 'Profile', href: '/profile/edit', icon: User, enabled: true },
 ]

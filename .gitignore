@@ -67,7 +67,8 @@ preview-*.png
 /.zscripts/
 /download/
 /examples/
-/mini-services/
+/mini-services/*
+!/mini-services/chat-service/
 /tests/
 Caddyfile
 # Top-level db/ is a sandbox SQLite runtime file. Project DB lives at src/lib/db/
@@ -77,6 +78,10 @@ Caddyfile
 *.db-journal
 *.sqlite
 *.sqlite-journal
+# Root-level sandbox screenshots (public/ PNGs are tracked separately)
+/*.png
+/*.jpg
+/*.jpeg
 
 # Worklog — committed so fresh-cloned agents can read the build history.
 # (See docs/phases.md "Agent Rules" — next-phase prompt reads worklog.md at repo root.)

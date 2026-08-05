@@ -1,0 +1,9 @@
+{
+  "name": "lellina-chat-service",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "DATABASE_URL=${DATABASE_URL:-file:/home/z/my-project/db/custom.db} bun --hot index.ts",
+    "start": "bun index.ts"
+  }
+}
