@@ -53,7 +53,7 @@
 | **Team** | Solo dev + AI only |
 | **Distribution** | Web app first → APK via CapacitorJS (V2) |
 | **Payment** | LAST phase of V1. Gateway TBD. |
-| **V1 Scope** | No group chat. No Play Store. |
+| **V1 Scope** | Group chat (premium feature). No Play Store. |
 
 ---
 
@@ -150,7 +150,7 @@
 ## 🧭 APP NAVIGATION
 
 ```
-DISCOVER → CHAT → EVENTS → PROFILE
+DISCOVER → CHAT → GROUPS → PROFILE
 ```
 
 Four tabs. Always visible. Bottom navigation on mobile. Side navigation on desktop.
@@ -350,35 +350,47 @@ Four tabs. Always visible. Bottom navigation on mobile. Side navigation on deskt
 
 ---
 
-### 7. Events Tab
+### 7. Group Chat
 
-**Goal:** Connect galz in real life across Tanzania & Kenya. Events are the bridge from digital to physical.
+**Goal:** Connect galz in community spaces. Group chat is the social backbone of Lellina.
+
+**MVP Notes:**
+- Lelly Pass required to create groups and post. Free users can view but not post.
+- Users can send pictures in group chat.
+- Built on Socket.io with room support.
+- Auto-groups by district + tribe tag.
+- Reactions, @mentions, typing indicators, read receipts, group moderation, invite links.
 
 | Feature | Details |
 |---|---|
-| Events page | Browse events by Tanzania region or Kenya county. |
-| Event discovery | Filter by district, category, date. |
-| Event categories | Parties, meetups, brunch, beach days, art shows, etc. |
-| Free: Event titles | ✅ See event titles only. |
-| Lelly: Full details | ✅ See full event details — venue, time, coordinates, description. |
-| Create event | Lelly Pass holders only. |
-| Join event | Free for all verified users. |
-| Report button | Report inappropriate or fake events. |
-| Event API | RESTful API + database model for events. |
+| Group chat page | Browse groups by district or tribe tag. |
+| Group discovery | Filter by district, tribe tag. |
+| Auto-groups | Automatically created per district + per tribe tag. |
+| Free: View groups | ✅ View group messages (read-only). |
+| Lelly: Create & post | ✅ Create groups and post messages. |
+| Lelly: Send pics | ✅ Send pictures in group chat. |
+| Reactions | React to messages with emojis. |
+| @mentions | Mention other users in group chat. |
+| Typing indicators | See when others are typing. |
+| Read receipts | See who read your message. |
+| Group moderation | Group creators can moderate members and messages. |
+| Invite links | Share invite links to join groups. |
+| Report button | Report inappropriate groups or messages. |
+| Group API | RESTful API + database model for groups. Built on Socket.io with room support. |
 
-**Event Data Model:**
+**Group Data Model:**
 
 ```
-Event {
+Group {
   id: String
-  title: String
+  name: String
   description: String
-  category: String
+  type: String (auto | custom)
   district: String (Tanzania region or Kenya county)
-  venue: String
-  date: DateTime
+  tribeTag: String (optional)
   createdBy: String (user ID, Lelly Pass required)
-  attendees: [String] (user IDs)
+  members: [String] (user IDs)
+  inviteLink: String
   reported: Boolean
 }
 ```
@@ -403,8 +415,8 @@ Event {
 
 | Tier | What's Included |
 |---|---|
-| **Free** | Browse profiles unlimited. Swipe & Match unlimited. ALL filters unlimited. Live search unlimited. See 5 likes. 1 chat request/day. Send pics. Join events (title only). |
-| **Lelly Pass** | Everything in Free + Texting/Messaging unlocked. Photo viewing unlocked (unblur). Event details unlocked. Unlimited chat requests. Delete = ghost. See who liked you. Online status visible. Lelly badge on profile. Create events. |
+| **Free** | Browse profiles unlimited. Swipe & Match unlimited. ALL filters unlimited. Live search unlimited. See 5 likes. 1 chat request/day. Send pics. View group chat (read-only). |
+| **Lelly Pass** | Everything in Free + Texting/Messaging unlocked. Photo viewing unlocked (unblur). Group chat full access (create & post). Unlimited chat requests. Delete = ghost. See who liked you. Online status visible. Lelly badge on profile. Create groups. |
 
 **Paywall Messaging (Psychological Rule):**
 
@@ -412,7 +424,7 @@ Event {
 |---|---|
 | **Chat** | "Every connection on Lellina is intentional. Secure your Lelly Pass to unlock direct conversations with verified women who are serious about dating." |
 | **Photo** | "Your digital boundary matters. Unlock the Lelly Pass for screenshot-protected, secure photo viewing." |
-| **Events** | "Step out into real life. Get your Lelly Pass to unlock the safest curated local queer venues and party coordinates across Tanzania & Kenya." |
+| **Group Chat** | "Your community is calling. Secure your Lelly Pass to create groups, post messages, and connect with verified women in your area." |
 
 **Lelly Badge:** Gold badge on profile. Visible to all. Signals: "I'm serious about real connection."
 
@@ -475,7 +487,7 @@ Event {
 | District selection | Choose from 31 Tanzania regions or 47 Kenya counties during profile setup. |
 | Street tag | Free text. Neighborhood-level. |
 | Seed data | All 78 districts pre-seeded in database (31 TZ + 47 KE). |
-| Filtering | Discover grid filters by district. Events filter by district. |
+| Filtering | Discover grid filters by district. Groups filter by district. |
 
 **Districts (Seed Data):**
 
@@ -618,8 +630,8 @@ On deep/dark backgrounds (`bg-hero-dark`, `bg-section-dark`, `bg-soft-charcoal`,
 | Delete = ghost | ❌ | ✅ |
 | See who liked you | ❌ | ✅ |
 | Online status visible | ❌ | ✅ |
-| Event details | Title only | ✅ Full details |
-| Create events | ❌ | ✅ |
+| Group chat | View only (read) | ✅ Create & post |
+| Create groups | ❌ | ✅ |
 | Lelly badge | ❌ | ✅ |
 
 ---
@@ -641,7 +653,7 @@ These are NOT in V1. Listed for planning only.
 
 | Feature | Notes |
 |---|---|
-| Group chat | Community channels by district/interest. |
+| Events | Events tab with district filtering, category, date. Title-only for free, full details for Lelly Pass. |
 | Rate Me | Profile rating feature. |
 | Blog system | Content + community stories. |
 | Chat enhancements | Typing indicators, voice messages, reactions, search. |
@@ -694,7 +706,7 @@ These are NOT in V1. Listed for planning only.
 | **Phase 3** | Profile Setup + Tags + Location | ✅ COMPLETE. Wizard (5 steps). Tanzania (31 regions) + Kenya (47 counties) = 78 districts. 90 tribe tags (5 max). Country isolation enforced (TZ + KE at the gate). |
 | **Phase 4** | Discover Grid + Filters + Live Search | Grid view. ALL filters (age, district, tags, online). Live search. Like/Match. |
 | **Phase 5** | Chat Engine + Image Viewer | Socket.io. Handle requests. Blurred photos for free. |
-| **Phase 6** | Events Tab | Event CRUD. District filtering. Title-only for free. |
+| **Phase 6** | Group Chat Tab | Group CRUD. Socket.io rooms. Auto-groups by district + tribe. View-only for free. |
 | **Phase 7** | Lelly Pass + Value Exchange Gating | 500 slot scarcity. Countdown. Paywall messaging. |
 | **Phase 8** | Notifications + Admin Panel | Push notifications. Admin review queues. |
 | **Phase 9** | Settings + Profile Management | Full settings. Block/report. Theme toggle. |
@@ -827,7 +839,7 @@ Never: premium/subscribe/upgrade. Always: Lelly Pass / Secure / Unlock.
 
 - No auto-nudity filter on user content. Users post freely (except illegal).
 - Sightengine = verification fraud ONLY. NOT content moderation. Saves quota.
-- Community Report button on profiles, chat messages, events → admin queue.
+- Community Report button on profiles, chat messages, groups → admin queue.
 - Report model: `Report` (reporter, target, reason, status). Admin: Warn/Suspend/Ban/Dismiss.
 
 ### 15. New Tasks (2.20–2.22)

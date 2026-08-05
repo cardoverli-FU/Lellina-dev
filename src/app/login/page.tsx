@@ -97,20 +97,28 @@ function LoginInner() {
       }
 
       // ─── Role-based redirect ───────────────────────────────────
-      // EVERYONE (admin included) lands on /discover first.
-      // Admins get a Shield toggle in the app nav to switch to the admin panel
-      // whenever they want. The admin panel has a "Back to App" toggle too.
+      // ADMIN lands on admin panel directly.
+      // Regular users land on /discover.
+      // Admins can switch to the app via the "Back to App" toggle in admin nav.
       try {
         const sessionRes = await fetch('/api/auth/session')
         const session = await sessionRes.json()
         const userRole = session?.user?.role
-        // Always land on discover. Admin can flip to admin panel via the
-        // Shield toggle in the sidebar / bottom nav.
-        const target = callbackUrl && callbackUrl !== '/' ? callbackUrl : '/discover'
-        toast({
-          title: 'Welcome back',
-          description: userRole === 'ADMIN' ? 'You\'re in. Tap the Shield to open Admin.' : 'You\'re in.',
-        })
+        let target: string
+        if (userRole === 'ADMIN') {
+          // Admin → admin panel first
+          target = callbackUrl && callbackUrl !== '/' && !callbackUrl.startsWith('/discover') ? callbackUrl : '/admin/manual-verification'
+          toast({
+            title: 'Welcome back, Admin',
+            description: 'You\'re in the admin panel. Tap "Back to App" to browse Discover.',
+          })
+        } else {
+          target = callbackUrl && callbackUrl !== '/' ? callbackUrl : '/discover'
+          toast({
+            title: 'Welcome back',
+            description: 'You\'re in.',
+          })
+        }
         router.push(target)
         router.refresh()
       } catch {

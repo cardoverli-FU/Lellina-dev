@@ -61,7 +61,7 @@ export function FilterPanel({ filters, onChange, resultCount }: FilterPanelProps
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto bg-hero-dark border-cream/10 p-0 text-cream">
+      <SheetContent side="right" className="w-full sm:max-w-md bg-hero-dark border-cream/10 p-0 text-cream overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
         <SheetHeader className="p-5 pb-3 border-b border-cream/10">
           <div className="flex items-center justify-between">
             <SheetTitle className="font-display text-xl font-bold text-cream">Filters</SheetTitle>

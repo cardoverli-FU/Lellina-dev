@@ -58,7 +58,7 @@
 | **Platform** | Web app first (Next.js) → APK via CapacitorJS later |
 | **Distribution** | No Play Store — direct web + APK |
 | **Payment** | LAST phase in V1. Gateway TBD (Lemon Squeezy, PayFast, or in-app) |
-| **V1 Scope** | No group chat. No Play Store. |
+| **V1 Scope** | Group chat (premium). No Events in V1. No Play Store. |
 
 ### Tanzania Regions (31)
 
@@ -156,12 +156,14 @@ USD is the PRIMARY currency — users send exactly this amount in USD. ZAR is sh
 ### App Navigation
 
 ```
-DISCOVER → CHAT → EVENTS → PROFILE
+DISCOVER → CHAT → GROUPS → PROFILE
 ```
 
 ### Core Strategy: Browse Free, Connect with Lelly Pass
 
 Users can browse, filter, search, and match for FREE. They find someone they want to talk to. BOOM — Lelly Pass required to message. This is the trap. It works because the desire to connect is the most powerful motivator.
+
+**Group chat is the social glue.** Free users can view group conversations but can't post. Lelly Pass unlocks full group participation + group creation. Groups auto-create for every district and tribe tag — women find their community immediately.
 
 ### Value Exchange Gating
 
@@ -172,11 +174,13 @@ Users can browse, filter, search, and match for FREE. They find someone they wan
 | Swipe & Match | ✅ Unlimited | ✅ Unlimited |
 | Texting / Messaging | ❌ 1/day | ✅ Unlocked |
 | Photo viewing | Blurred | Unblur + screenshot-protected |
-| Event details | Title only | Full details |
 | Chat requests | 1 per day | Unlimited |
 | Delete = ghost | No | Yes |
 | See who liked you | No | Yes |
-| Create events | No | Yes |
+| Group chat — view | ✅ View (blurred photos) | ✅ Full access |
+| Group chat — post/send pics | ❌ | ✅ Unlocked |
+| Create groups | ❌ | ✅ Unlocked |
+| Group reactions & @mentions | ❌ | ✅ Unlocked |
 
 ### Nighttime Trap
 
@@ -306,13 +310,15 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 
 ---
 
-### Phase 4: Discover Grid + Filters + Live Search
+### Phase 4: Discover Grid + Filters + Live Search  ✅ COMPLETE
 
 **Goal:** The heart of the app. Browse, filter, search, and match — ALL FREE. Users find exactly who they're looking for. But when they want to TALK — that's where Lelly Pass comes in. **Anti-ghosting starts here:** Response Rate Badges on every profile card + filter by response rate.
 
-> **Phase 4 Split:** Phase 4 is split into two sub-phases for build quality:
+> **✅ PHASE 4 SHIPPED** — Discover grid, all filters (age, district, tribe tags, verified, online, photo, active, response rate), live search, Lelly Pass gating, anti-ghost messaging, Tanzania & Kenya text audit ALL COMPLETE. Filter dropdowns fixed (inline expandable lists replace Popover-inside-Sheet pattern). Admin lands on admin panel after login.
+>
+> **Phase 4 Split:** Phase 4 was split into two sub-phases for build quality:
 > - **Phase 4A:** Core discover grid + profile cards + like/pass + founder pin + infinite scroll + 4 core filters (age, district, tribe tags, verified) + app layout with bottom nav. Country isolation enforced. ✅ **LIVE on Render** (commits e22d136 → a1258d9).
-> - **Phase 4B:** Response rate badge + ghost score + 4 remaining filters (online, photo, active, response rate) + live search + mobile search + Lelly Pass gating + landing anti-ghost message. ☐ **NEXT**.
+> - **Phase 4B:** Response rate badge + ghost score + 4 remaining filters (online, photo, active, response rate) + live search + mobile search + Lelly Pass gating + landing anti-ghost message. ✅ **COMPLETE**.
 
 | # | Task | Status | File Route |
 |---|------|--------|------------|
@@ -322,31 +328,31 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 | 4.4 | Founder profile pinned first in grid | ✅ Phase 4A | `src/app/api/discover/route.ts` (ordering) |
 | 4.5 | Infinite scroll pagination | ✅ Phase 4A | `src/components/discover/InfiniteScroll.tsx` |
 | 4.6 | Online status indicators (Sage dot = online, Gray = offline) | ✅ Phase 4A | `src/components/discover/OnlineStatus.tsx` |
-| 4.7 | **Response Rate Badge** — visible on every profile card. 3 tiers: "Replies within 24h" ✅ (sage), "Often takes a while" ⏳ (gold), "Ghost risk 🚩" (warm-rose). Calculated from reply time patterns. Selling point: users know who's active | ☐ Phase 4B | `src/components/discover/ResponseBadge.tsx` + `src/lib/ghost-score.ts` |
-| 4.8 | **Ghost Score (hidden)** — backend metric. Tracks reply patterns. If someone ghosts 3+ people, their badge downgrades to "Ghost risk" and they get deprioritized in Discover ranking. Not public shaming, just consequences | ☐ Phase 4B (schema fields `responseRateTier`, `ghostScore`, `ghostFlagCount`, `lastReplyAt` ALREADY on Profile — ready to use) | `src/lib/ghost-score.ts` |
+| 4.7 | **Response Rate Badge** — visible on every profile card. 3 tiers: "Replies within 24h" ✅ (sage), "Often takes a while" ⏳ (gold), "Ghost risk 🚩" (warm-rose). Calculated from reply time patterns. Selling point: users know who's active | ✅ Phase 4B | `src/components/discover/ResponseBadge.tsx` + `src/lib/ghost-score.ts` |
+| 4.8 | **Ghost Score (hidden)** — backend metric. Tracks reply patterns. If someone ghosts 3+ people, their badge downgrades to "Ghost risk" and they get deprioritized in Discover ranking. Not public shaming, just consequences | ✅ Phase 4B (schema fields `responseRateTier`, `ghostScore`, `ghostFlagCount`, `lastReplyAt` ALREADY on Profile — ready to use) | `src/lib/ghost-score.ts` |
 | 4.9 | **Filter: Age range** (slider, 18–60) | ✅ Phase 4A | `src/components/discover/filters/AgeFilter.tsx` |
 | 4.10 | **Filter: District** (multi-select) | ✅ Phase 4A | `src/components/discover/filters/DistrictFilter.tsx` |
 | 4.11 | **Filter: Tribe tags** (multi-select from identity/subculture categories) | ✅ Phase 4A | `src/components/discover/filters/TagFilter.tsx` |
-| 4.12 | **Filter: Online now** (toggle) | ☐ Phase 4B | `src/components/discover/filters/OnlineFilter.tsx` |
+| 4.12 | **Filter: Online now** (toggle) | ✅ Phase 4B | `src/components/discover/filters/OnlineFilter.tsx` |
 | 4.13 | **Filter: Verified only** (toggle, default on) | ✅ Phase 4A | `src/components/discover/filters/VerifiedFilter.tsx` |
-| 4.14 | **Filter: Has photo** (toggle) | ☐ Phase 4B | `src/components/discover/filters/PhotoFilter.tsx` |
-| 4.15 | **Filter: Recently active** (toggle, last 24h) | ☐ Phase 4B | `src/components/discover/filters/ActiveFilter.tsx` |
-| 4.16 | **Filter: Response rate** — filter OUT ghost risks! Options: "Replies within 24h only", "Not ghost risk". This is a SELLING POINT — users love that they can filter out ghosts | ☐ Phase 4B | `src/components/discover/filters/ResponseFilter.tsx` |
+| 4.14 | **Filter: Has photo** (toggle) | ✅ Phase 4B | `src/components/discover/filters/PhotoFilter.tsx` |
+| 4.15 | **Filter: Recently active** (toggle, last 24h) | ✅ Phase 4B | `src/components/discover/filters/ActiveFilter.tsx` |
+| 4.16 | **Filter: Response rate** — filter OUT ghost risks! Options: "Replies within 24h only", "Not ghost risk". This is a SELLING POINT — users love that they can filter out ghosts | ✅ Phase 4B | `src/components/discover/filters/ResponseFilter.tsx` |
 | 4.17 | **Filter panel** (collapsible, combines all filters) | ✅ Phase 4A | `src/components/discover/FilterPanel.tsx` |
-| 4.18 | **Live search** (real-time search as you type, debounced 300ms) | ☐ Phase 4B | `src/components/discover/LiveSearch.tsx` |
-| 4.19 | **Live search fields** (name, bio, street tag, tribe tags) | ☐ Phase 4B | `src/components/discover/LiveSearch.tsx` |
-| 4.20 | **Search + filter stacking** (live search works on top of active filters) | ☐ Phase 4B | `src/components/discover/DiscoverGrid.tsx` |
-| 4.21 | **Mobile search** (expandable search bar, pull-down to reveal) | ☐ Phase 4B | `src/components/discover/MobileSearch.tsx` |
-| 4.22 | Free tier: See 5 likes only | ☐ Phase 4B | `src/lib/gating.ts` |
-| 4.23 | Lelly Pass: See unlimited likes | ☐ Phase 4B | `src/lib/gating.ts` |
+| 4.18 | **Live search** (real-time search as you type, debounced 300ms) | ✅ Phase 4B | `src/components/discover/LiveSearch.tsx` |
+| 4.19 | **Live search fields** (name, bio, street tag, tribe tags) | ✅ Phase 4B | `src/components/discover/LiveSearch.tsx` |
+| 4.20 | **Search + filter stacking** (live search works on top of active filters) | ✅ Phase 4B | `src/components/discover/DiscoverGrid.tsx` |
+| 4.21 | **Mobile search** (expandable search bar, pull-down to reveal) | ✅ Phase 4B | `src/components/discover/MobileSearch.tsx` |
+| 4.22 | Free tier: See 5 likes only | ✅ Phase 4B | `src/lib/gating.ts` |
+| 4.23 | Lelly Pass: See unlimited likes | ✅ Phase 4B | `src/lib/gating.ts` |
 | 4.24 | App layout with nav tabs (Discover → Chat → Events → Profile) | ✅ Phase 4A (Chat + Events disabled/greyed; Admin Shield toggle for admin role) | `src/app/(app)/layout.tsx` |
-| 4.25 | **Landing page anti-ghost message** — explicitly say on the landing page: "We want active users, not ghosts. Response rate badges keep everyone honest." | ☐ Phase 4B | `src/components/landing/WhyGalzSection.tsx` or `src/components/landing/TrustSafety.tsx` |
-| 4.26 | **Tanzania & Kenya text audit** — remove any non-TZ/KE words/country references from ALL UI strings (landing, join, discover, profile, emails). Verify no 'South Africa', 'Cape Town', 'Portland', 'Oregon', 'USA', '🇿🇦', '🇺🇸' remain in any user-visible text. | ☐ Phase 4B | Throughout — `src/components/landing/*`, `src/app/join/*`, `src/app/(app)/discover/*`, `src/components/profile/*`, `src/lib/email/*` |
+| 4.25 | **Landing page anti-ghost message** — explicitly say on the landing page: "We want active users, not ghosts. Response rate badges keep everyone honest." | ✅ Phase 4B | `src/components/landing/WhyGalzSection.tsx` or `src/components/landing/TrustSafety.tsx` |
+| 4.26 | **Tanzania & Kenya text audit** — remove any non-TZ/KE words/country references from ALL UI strings (landing, join, discover, profile, emails). Verify no 'South Africa', 'Cape Town', 'Portland', 'Oregon', 'USA', '🇿🇦', '🇺🇸' remain in any user-visible text. | ✅ Phase 4B | Throughout — `src/components/landing/*`, `src/app/join/*`, `src/app/(app)/discover/*`, `src/components/profile/*`, `src/lib/email/*` |
 
-> **Phase 4A progress: 12 / 26 tasks DONE and LIVE.** Remaining 14 tasks = Phase 4B (next chat) — including the new 4.26 Tanzania & Kenya text audit.
-> **Admin toggle (Phase 8 task 8.5):** already shipped early — admin logs in → lands on `/discover` → Shield toggle in nav → `/admin/manual-verification` → "Back to App" toggle → `/discover`. No re-login.
+> **Phase 4A+4B progress: 26 / 26 tasks DONE.** Phase 4 is COMPLETE.
+> **Admin toggle (Phase 8 task 8.5):** already shipped early — admin logs in → lands on admin panel → Shield toggle in nav → `/admin/manual-verification` → "Back to App" toggle → `/discover`. No re-login.
 
-**Phase 4 Exit Criteria:** Discover grid works with ALL filters (age, district, tribe tags, online, verified, photo, active, **response rate**). Live search is real-time and debounced. Filters stack with search. Like/pass system works. **Response Rate Badges visible on every profile card. Ghost risks can be filtered out.** Founder is pinned first. Infinite scroll loads more profiles. Landing page mentions anti-ghosting. Mobile is flawless.
+**Phase 4 Exit Criteria:** ✅ MET — Discover grid works with ALL filters (age, district, tribe tags, online, verified, photo, active, **response rate**). Live search is real-time and debounced. Filters stack with search. Like/pass system works. **Response Rate Badges visible on every profile card. Ghost risks can be filtered out.** Founder is pinned first. Infinite scroll loads more profiles. Landing page mentions anti-ghosting. Mobile is flawless. Lelly Pass gating works. Tanzania & Kenya text audit complete. Admin lands on admin panel after login.
 
 ---
 
@@ -379,23 +385,38 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 
 ---
 
-### Phase 6: Events Tab
+### Phase 6: Group Chat — Premium Feature  ☐ NEXT
 
-**Goal:** Events discovery across Tanzania & Kenya. Lelly Pass holders create events, everyone can join. Free users see titles only; Lelly users see full details.
+**Goal:** Community group chat rooms where verified women connect by district, interest, and tribe tags. **Lelly Pass required** to create and fully participate in groups. Free users can view groups but can't post. Users can send pictures in group chat. Built on open-source Socket.io with room support.
+
+> **Why Group Chat in V1:** Community is the #1 retention driver. Group chat lets women find their people BEFORE 1-on-1 dating. It's the social glue that keeps Lellina alive between matches. Premium gating (Lelly Pass) makes it a revenue driver from day one.
+>
+> **Open-Source Stack:** Socket.io (already in Phase 5) + `stream-chat-react` UI components (Apache-2.0, production-grade chat UI) OR custom UI on top of Socket.io rooms. No vendor lock-in.
 
 | # | Task | Status | File Route |
 |---|------|--------|------------|
-| 6.1 | Events page with Tanzania & Kenya districts | ☐ | `src/app/events/page.tsx` |
-| 6.2 | Event discovery (filter by district, category, date) | ☐ | `src/components/events/EventDiscovery.tsx` |
-| 6.3 | Event categories | ☐ | `src/components/events/EventCategories.tsx` |
-| 6.4 | Create event (Lelly only) | ☐ | `src/app/events/create/page.tsx` |
-| 6.5 | Join event (free) | ☐ | `src/app/api/events/join/route.ts` |
-| 6.6 | Event details — free: see title only, Lelly: see full details | ☐ | `src/app/events/[id]/page.tsx` |
-| 6.7 | Report button on events | ☐ | `src/components/events/ReportButton.tsx` |
-| 6.8 | Event API | ☐ | `src/app/api/events/route.ts` |
-| 6.9 | Event database model | ☐ | `prisma/schema.prisma` (Event model) |
+| 6.1 | Group chat page + UI | ☐ | `src/app/groups/page.tsx` |
+| 6.2 | Group list — browse by district, tribe tag, or "All" | ☐ | `src/components/groups/GroupList.tsx` |
+| 6.3 | Group creation — Lelly Pass ONLY (name, description, district, tribe tag, max members, isPrivate) | ☐ | `src/app/groups/create/page.tsx` |
+| 6.4 | Group join (free users can view, Lelly Pass to post) | ☐ | `src/app/api/groups/join/route.ts` |
+| 6.5 | Group chat room — real-time messages via Socket.io rooms | ☐ | `src/components/groups/GroupChatRoom.tsx` |
+| 6.6 | **Send pictures in group chat** — users can send photos in group messages. Free: view only (blurred). Lelly: send + view full | ☐ | `src/components/groups/GroupPhotoMessage.tsx` |
+| 6.7 | Group member list + admin controls (kick, promote to admin) | ☐ | `src/components/groups/GroupMembers.tsx` |
+| 6.8 | Group message reactions (emoji reactions on messages) | ☐ | `src/components/groups/MessageReactions.tsx` |
+| 6.9 | Group typing indicators | ☐ | `src/components/groups/TypingIndicator.tsx` |
+| 6.10 | Group read receipts | ☐ | `src/components/groups/GroupReadReceipts.tsx` |
+| 6.11 | Group message search (search within a group's messages) | ☐ | `src/components/groups/GroupSearch.tsx` |
+| 6.12 | Group notification settings (mute, mentions only, all) | ☐ | `src/components/groups/GroupNotifSettings.tsx` |
+| 6.13 | @mention support in group messages | ☐ | `src/components/groups/MentionSupport.tsx` |
+| 6.14 | Group invite link (shareable link to join) | ☐ | `src/app/api/groups/invite/route.ts` |
+| 6.15 | Group report + moderation (report messages, group admin can delete) | ☐ | `src/app/api/groups/report/route.ts` |
+| 6.16 | **Lelly Pass gating** — Free: view groups + messages (blurred photos), can't post. Lelly: full access (post, send pics, create groups, @mention, reactions) | ☐ | `src/lib/group-gating.ts` |
+| 6.17 | Group database model (Group, GroupMember, GroupMessage) | ☐ | `prisma/schema.prisma` |
+| 6.18 | Group API routes (CRUD + messaging) | ☐ | `src/app/api/groups/route.ts` |
+| 6.19 | Auto-groups — system-created groups by district (e.g. "Dar es Salaam Galz", "Nairobi Queer Scene") + by tribe tag | ☐ | `prisma/seed.ts` (auto-group section) |
+| 6.20 | Group chat intercept — Free user tries to post → "Secure your Lelly Pass to join the conversation" | ☐ | `src/components/groups/GroupIntercept.tsx` |
 
-**Phase 6 Exit Criteria:** Events are browsable by district. Lelly holders can create events. Everyone can join. Free users see limited info; Lelly users see full details. Reports work.
+**Phase 6 Exit Criteria:** Group chat works end-to-end. Lelly Pass gating enforced (free view, Lelly post). Pictures can be sent in groups. Socket.io rooms power real-time messaging. Auto-groups created for each district + tribe tag. Reactions, @mentions, typing indicators, read receipts all work. Group moderation works. Intercept messaging is psychological (not transactional).
 
 ---
 
@@ -514,16 +535,17 @@ Brief roadmap for after V1 ships:
 
 | # | Feature | Notes |
 |---|---------|--------|
-| V2.1 | Group chat | Community channels by district/interest |
+| V2.1 | Events discovery | Phase 6 from V1 plan — district-filtered events, Lelly-only creation, free join |
 | V2.2 | Rate Me | Profile rating feature |
 | V2.3 | Blog system | Content + SEO |
-| V2.4 | Chat enhancements | More media, reactions, etc. |
+| V2.4 | Chat enhancements | More media, reactions, voice messages, video calls |
 | V2.5 | AI content moderation | Auto-flag inappropriate content |
 | V2.6 | APK (CapacitorJS) | Native mobile app |
 | V2.7 | Analytics dashboard | User behavior insights |
 | V2.8 | Data export & deletion | GDPR-style compliance |
 | V2.9 | Community features | Forums, spaces, etc. |
 | V2.10 | Subscription enhancements | More tiers, gifting, etc. |
+| V2.11 | Group chat enhancements | Voice rooms, group video, larger groups |
 
 ---
 
@@ -544,9 +566,9 @@ Brief roadmap for after V1 ships:
 
 | Field | Value |
 |-------|-------|
-| **Phase** | Phase 1 ✅ COMPLETE. Phase 2 ✅ COMPLETE. Phase 3 ✅ COMPLETE. Phase 4A ✅ LIVE on Render (12/26 tasks: discover grid + like/pass + founder pin + infinite scroll + 4 core filters + app layout + admin toggle). Phase 4B ☐ NEXT (14 tasks: response rate badge + ghost score + 4 remaining filters + live search + mobile search + Lelly Pass gating + landing anti-ghost + Tanzania & Kenya text audit). **Tanzania & Kenya pivot:** 🇹🇿 Tanzania (31 regions) + 🇰🇪 Kenya (47 counties) = 78 districts is the V1 launch market. Other regions are Coming soon (code is generic — only seed data changed: admin country TZ, demo profiles renamed to East African names, /join country gate now allows TZ + KE only, landing banner shows "Tanzania 🇹🇿 & Kenya 🇰🇪"). 90 tribe tags. Country isolation enforced. Live at https://lellina-dev.onrender.com (commit a1258d9). |
+| **Phase** | Phase 1 ✅ COMPLETE. Phase 2 ✅ COMPLETE. Phase 3 ✅ COMPLETE. Phase 4 ✅ COMPLETE (26/26 tasks: discover grid + all filters + live search + Lelly Pass gating + anti-ghost messaging + Tanzania & Kenya text audit). **Tanzania & Kenya pivot:** 🇹🇿 Tanzania (31 regions) + 🇰🇪 Kenya (47 counties) = 78 districts is the V1 launch market. Other regions are Coming soon (code is generic — only seed data changed: admin country TZ, demo profiles renamed to East African names, /join country gate now allows TZ + KE only, landing banner shows "Tanzania 🇹🇿 & Kenya 🇰🇪"). 90 tribe tags. Country isolation enforced. Live at https://lellina-dev.onrender.com (commit a1258d9). |
 | **Version** | V1 in progress, V2 planned |
-| **Next Step** | Phase 4B — Response Rate Badge + Ghost Score + 4 remaining filters (online, photo, active, response rate) + Live Search (debounced 300ms) + Mobile Search + Lelly Pass gating (5 likes free / unlimited Lelly) + Landing anti-ghost message + **Tanzania & Kenya text audit (4.26)** (14 tasks). See Phase 4 table above. |
+| **Next Step** | Phase 5 — Chat Engine + Image Viewer + Anti-Ghosting. |
 | **Admin Note** | Admin user (`cardoverli`) has ONE account with TWO modes: normal user view + admin dashboard toggle (no re-login). Ships in Phase 8 (task 8.5). Schema already supports: `role: ADMIN` + `Profile` (1:1). |
 
 ---

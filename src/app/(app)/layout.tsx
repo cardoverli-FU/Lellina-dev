@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Compass, MessageCircle, Calendar, User, Shield } from 'lucide-react'
+import { Compass, MessageCircle, Users, User, Shield } from 'lucide-react'
 
 interface NavItem {
   label: string
@@ -15,15 +15,15 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: 'Discover', href: '/discover', icon: Compass, enabled: true },
   { label: 'Chat', href: '/chat', icon: MessageCircle, enabled: false },
-  { label: 'Events', href: '/events', icon: Calendar, enabled: false },
+  { label: 'Groups', href: '/groups', icon: Users, enabled: false },
   { label: 'Profile', href: '/profile/edit', icon: User, enabled: true },
 ]
 
 /**
  * Phase 4.24 — App layout with bottom nav (mobile) + sidebar (desktop).
- * Discover → Chat → Events → Profile
+ * Discover → Chat → Groups → Profile
  *
- * Chat + Events are disabled (greyed) — they ship in Phase 5 + 6.
+ * Chat + Groups are disabled (greyed) — they ship in Phase 5 + 6.
  * Admin users get an extra "Admin" nav item (toggle to admin panel).
  */
 export default function AppLayout({ children }: { children: React.ReactNode }) {
