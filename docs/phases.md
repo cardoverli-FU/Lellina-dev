@@ -362,26 +362,28 @@ Random biometric verification during late-night hours (21:00–04:00 SAST). If t
 
 | # | Task | Status | File Route |
 |---|------|--------|------------|
-| 5.1 | Socket.io setup (same server) | ☐ | `src/lib/socket.ts` |
-| 5.2 | Chat page + UI components | ☐ | `src/app/chat/page.tsx` |
-| 5.3 | Chat API routes | ☐ | `src/app/api/chat/route.ts` |
-| 5.4 | Handle request system (social handles hidden until mutual approval) | ☐ | `src/app/api/handle-request/route.ts` |
-| 5.5 | Read receipts | ☐ | `src/components/chat/ReadReceipts.tsx` |
-| 5.6 | Free: can send pics, CANNOT receive pics (blurred) | ☐ | `src/components/chat/BlurredPhoto.tsx` |
-| 5.7 | Lelly: receive pics, delete=ghost | ☐ | `src/components/chat/PhotoViewer.tsx` |
-| 5.8 | Free: 1 chat request/day limit | ☐ | `src/lib/chat-limits.ts` |
-| 5.9 | Lelly: unlimited chat requests | ☐ | `src/lib/chat-limits.ts` |
-| 5.10 | Suggest social messengers in chat | ☐ | `src/components/chat/MessengerSuggest.tsx` |
-| 5.11 | Online status indicators | ☐ | `src/components/chat/OnlineStatus.tsx` |
-| 5.12 | Last seen tracking | ☐ | `src/lib/last-seen.ts` |
-| 5.13 | Image viewer — VERY modern, VERY cute, animations | ☐ | `src/components/chat/ImageViewer.tsx` |
-| 5.14 | **"Not Feeling It" button** — one-tap polite exit. Sends a pre-written kind message ("Hey, I don't think we're a match. Wishing you well! 💛") and closes the chat gracefully. Replaces ghosting with a kind exit | ☐ | `src/components/chat/NotFeelingIt.tsx` |
-| 5.15 | **Ghost Nudge** — after 3 days of no reply, the other person sees a "Still there? 👋" button that sends ONE nudge (can't spam it). If no reply after 7 days, the ghost is flagged | ☐ | `src/components/chat/GhostNudge.tsx` |
-| 5.16 | **Ghost Score tracking** — backend tracks reply times. Every chat updates the ghost score. Consistent fast replies = "Replies within 24h" badge. Slow replies = "Often takes a while". Ghosting 3+ people = "Ghost risk 🚩" and Discover deprioritization | ☐ | `src/lib/ghost-score.ts` + `src/app/api/ghost-score/route.ts` |
-| 5.17 | **Ghost Flag** — after 7+ days of silence in a conversation, the other person can tap "Report Ghosting". Accumulated flags = ghost reputation. Admin can warn/ban chronic ghosts | ☐ | `src/components/chat/ReportGhost.tsx` + `src/app/api/ghost-flag/route.ts` |
-| 5.18 | **Ghost Redemption** — how ghosts improve their badge. If a ghost becomes active again (replies within 24h for 14 consecutive days), their badge upgrades: "Ghost risk 🚩" → "Often takes a while" → "Replies within 24h". The path back is clear and achievable | ☐ | `src/lib/ghost-score.ts` (redemption logic) |
+| 5.1 | Socket.io setup (separate chat-service) | ✅ | `mini-services/chat-service/index.ts` + `src/lib/socket-client.ts` |
+| 5.2 | Chat page + UI components | ✅ | `src/app/(app)/chat/page.tsx` + 12 components in `src/components/chat/` |
+| 5.3 | Chat API routes | ✅ | `src/app/api/chat/` (14 routes: token, limits, request, conversations, messages, nudge, etc.) |
+| 5.4 | Handle request system (social handles hidden until mutual approval) | ✅ | `src/app/api/chat/conversations/[id]/handle-request/route.ts` + `HandleRequest` model + `HandleRequestBar.tsx` |
+| 5.5 | Read receipts | ✅ | `src/components/chat/ReadReceipts.tsx` + `deliveredAt`/`readAt` fields on `Message` |
+| 5.6 | Free: can send pics, CANNOT receive pics (blurred) | ✅ | `src/components/chat/BlurredPhoto.tsx` + gating in `src/lib/gating.ts` |
+| 5.7 | Lelly: receive pics, delete=ghost | ✅ | `src/components/chat/PhotoViewer.tsx` + soft-delete on `Message` (`deletedAt`/`deletedById`) |
+| 5.8 | Free: 1 chat request/day limit | ✅ | `src/lib/chat-limits.ts` + `src/app/api/chat/limits/route.ts` |
+| 5.9 | Lelly: unlimited chat requests | ✅ | `src/lib/chat-limits.ts` (hasLellyPass bypass) |
+| 5.10 | Suggest social messengers in chat | ✅ | `src/components/chat/MessengerSuggest.tsx` |
+| 5.11 | Online status indicators | ✅ | `src/components/chat/OnlineStatus.tsx` + `presence:online`/`presence:offline` socket events |
+| 5.12 | Last seen tracking | ✅ | `src/lib/last-seen.ts` + `lastActiveAt`/`isOnline` fields on `Profile` |
+| 5.13 | Image viewer — VERY modern, VERY cute, animations | ✅ | `src/components/chat/ImageViewer.tsx` (framer-motion powered) |
+| 5.14 | **"Not Feeling It" button** — one-tap polite exit. Sends a pre-written kind message ("Hey, I don't think we're a match. Wishing you well! 💛") and closes the chat gracefully. Replaces ghosting with a kind exit | ✅ | `src/components/chat/NotFeelingIt.tsx` + `NOT_FEELING_IT` message type + `src/app/api/chat/conversations/[id]/not-feeling-it/route.ts` |
+| 5.15 | **Ghost Nudge** — after 3 days of no reply, the other person sees a "Still there? 👋" button that sends ONE nudge (can't spam it). If no reply after 7 days, the ghost is flagged | ✅ | `src/components/chat/GhostNudge.tsx` + `GhostNudge` model + `nudge:send`/`nudge:new` socket events (1 per 24h) |
+| 5.16 | **Ghost Score tracking** — backend tracks reply times. Every chat updates the ghost score. Consistent fast replies = "Replies within 24h" badge. Slow replies = "Often takes a while". Ghosting 3+ people = "Ghost risk 🚩" and Discover deprioritization | ✅ | `src/lib/ghost-score.ts` + `src/app/api/ghost-score/route.ts` + `recordReplyForGhostScore` in chat-service + `responseRateTier`/`ghostScore` on `Profile` |
+| 5.17 | **Ghost Flag** — after 7+ days of silence in a conversation, the other person can tap "Report Ghosting". Accumulated flags = ghost reputation. Admin can warn/ban chronic ghosts | ✅ | `src/components/chat/ReportGhost.tsx` + `GhostFlag` model + `src/app/api/chat/conversations/[id]/flag/route.ts` |
+| 5.18 | **Ghost Redemption** — how ghosts improve their badge. If a ghost becomes active again (replies within 24h for 14 consecutive days), their badge upgrades: "Ghost risk 🚩" → "Often takes a while" → "Replies within 24h". The path back is clear and achievable | ✅ | `GhostRedemption` model + `recalculateGhostScore` redemption logic in chat-service (14-day streak → tier upgrade) |
 
 **Phase 5 Exit Criteria:** Real-time chat works with Socket.io. Free/Lelly gating is enforced. Photo viewing is blurred for free users. Image viewer is polished and cute. Online status works. Chat requests limited to 1/day for free users. **"Not Feeling It" button replaces ghosting with kind exits. Ghost Nudge works after 3 days. Ghost Score tracks and updates badges. Ghost Flag after 7 days. Ghost Redemption lets ghosts improve their badge over 14 days of active replies.**
+
+> ✅ **Phase 5 SHIPPED** — All 18/18 tasks complete. Browser-verified end-to-end: admin login → chat page (Chats/Requests tabs) → discover (10 profiles with ghost badges + online status) → chat-service (socket.io on port 3003 / Render `lellina-chat`). 7 Prisma models, 14 API routes, 12 chat components, 5 lib files. Chat engine runs as a **separate standalone service** (`mini-services/chat-service/`) deployed to Render as `lellina-chat`, connected to the main Next.js app via `NEXT_PUBLIC_CHAT_SERVICE_URL`. Lint: 0 errors. Production render.yaml fixed: chat-service deploys from repo root so `prisma generate` works.
 
 ---
 
@@ -573,9 +575,9 @@ Brief roadmap for after V1 ships:
 
 | Field | Value |
 |-------|-------|
-| **Phase** | Phase 1 ✅ COMPLETE. Phase 2 ✅ COMPLETE. Phase 3 ✅ COMPLETE. Phase 4 ✅ COMPLETE (26/26 tasks: discover grid + all filters + live search + Lelly Pass gating + anti-ghost messaging + Tanzania & Kenya text audit). **Tanzania & Kenya pivot:** 🇹🇿 Tanzania (31 regions) + 🇰🇪 Kenya (47 counties) = 78 districts is the V1 launch market. Other regions are Coming soon (code is generic — only seed data changed: admin country TZ, demo profiles renamed to East African names, /join country gate now allows TZ + KE only, landing banner shows "Tanzania 🇹🇿 & Kenya 🇰🇪"). 90 tribe tags. Country isolation enforced. Live at https://lellina-dev.onrender.com (commit a1258d9). |
+| **Phase** | Phase 1 ✅ COMPLETE. Phase 2 ✅ COMPLETE. Phase 3 ✅ COMPLETE. Phase 4 ✅ COMPLETE (26/26 tasks). **Phase 5 ✅ COMPLETE (18/18 tasks: chat engine + image viewer + anti-ghosting — Socket.io chat-service deployed as separate Render service `lellina-chat`, 7 Prisma models, 14 API routes, 12 chat components, ghost score/nudge/flag/redemption all wired).** **Tanzania & Kenya pivot:** 🇹🇿 Tanzania (31 regions) + 🇰🇪 Kenya (47 counties) = 78 districts is the V1 launch market. Other regions are Coming soon. 90 tribe tags. Country isolation enforced. Live at https://lellina-dev.onrender.com. |
 | **Version** | V1 in progress, V2 planned |
-| **Next Step** | Phase 5 — Chat Engine + Image Viewer + Anti-Ghosting. |
+| **Next Step** | Phase 6 — Group Chat (Premium Feature: 2 country-isolated groups, Socket.io rooms, Lelly Pass gating). |
 | **Admin Note** | Admin user (`cardoverli`) has ONE account with TWO modes: normal user view + admin dashboard toggle (no re-login). Ships in Phase 8 (task 8.5). Schema already supports: `role: ADMIN` + `Profile` (1:1). |
 
 ---

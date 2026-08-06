@@ -88,16 +88,22 @@ services:
         sync: false
 
   # ─── SERVICE 2: Socket.io Chat Service ────────────────────────────
+  # Deploys from repo ROOT (not mini-services/chat-service) so that:
+  #   1. prisma/schema.prisma is present → `prisma generate` works
+  #   2. @prisma/client is generated into root node_modules
+  #   3. Node resolves it when bun runs mini-services/chat-service/index.ts
+  # Without this, the chat-service throws "@prisma/client did not initialize yet".
   - type: web
     name: lellina-chat
     runtime: bun
     plan: free
     region: oregon
     branch: main
-    rootDir: mini-services/chat-service
-    # Bun installs from package.json automatically. No build step needed.
-    buildCommand: echo "No build needed — Bun runs TypeScript directly"
-    startCommand: bun index.ts
+    rootDir: .
+    # npm install runs automatically (postinstall: prisma generate).
+    # Explicit prisma generate ensures the client is ready before start.
+    buildCommand: npx prisma generate
+    startCommand: bun mini-services/chat-service/index.ts
     healthCheckPath: /health
     autoDeploy: true
     envVars:
