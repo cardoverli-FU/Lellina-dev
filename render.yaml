@@ -1,26 +1,29 @@
 # Render.com deployment config for Lellina
 # Safe to commit — contains NO secrets (all env values set in dashboard).
 #
-# TWO SERVICES:
-#   1. lellina-dev       — Next.js app (Node runtime, port from Render)
-#   2. lellina-chat      — Socket.io chat-service (Bun runtime, port from Render)
+# TWO SERVICES (fully separated per Phase 5 architecture):
+#   1. lellina-dev       — Next.js app: UI, auth, REST API, profiles, admin
+#   2. lellina-chat      — Socket.io chat-service: stateless real-time transport
 #
-# Database strategy (SIMPLE WAY — no Turso yet):
-#   SQLite on the EPHEMERAL filesystem (file:./db/custom.db).
-#   Render free plan does NOT offer persistent disks anymore.
-#   The start script runs `prisma db push` + `seed` on every boot,
-#   so the DB is recreated from scratch on each cold start.
-#   User data is NOT persisted between restarts — acceptable for dev/preview.
-#   Turso (libsql) will replace this when finalizing for production.
+# ARCHITECTURE (bro's vision — confirmed correct):
+#   - Chat-service = pure transport layer (no data storage of its own)
+#   - Main app = source of truth for auth, profiles, CRUD
+#   - BOTH services connect to the SAME Turso (libsql) database
+#   - Single source of truth = zero sync conflicts
 #
-# NOTE: Both services get their own ephemeral DB on free plan.
-#   For chat to work end-to-end, both services must share a DB.
-#   On free plan, the Next.js app owns the DB (seeded on boot).
-#   The chat-service connects to the same DB URL (Turso) OR runs
-#   against its own DB (chat messages won't persist between services).
-#   FOR NOW: chat-service runs against its own ephemeral DB —
-#   real-time messaging works during a session, history may differ.
-#   FIX: Set TURSO_DATABASE_URL on BOTH services to share one DB.
+# DATABASE (REQUIRED — Turso for production):
+#   Both services MUST have DATABASE_URL set to the SAME Turso URL.
+#   Turso is the shared database that makes the separation work.
+#   Format: libsql://<your-db>.turso.io?authToken=<token>
+#
+#   ⚠️  KNOWN ISSUE (next agent will fix):
+#   Prisma 6.19's libsql driver adapter has a URL_INVALID bug.
+#   - Main app: falls back to file:./db/lellina.db (ephemeral SQLite) for now
+#   - chat-service: same fallback
+#   - NEXT AGENT will rewrite chat-service with @libsql/client (no Prisma)
+#     to use Turso directly. This makes chat-service truly stateless.
+#   Until then: set DATABASE_URL to Turso URL in dashboard on BOTH services.
+#   If Prisma throws URL_INVALID, fall back to file:./db/lellina.db (single-service mode).
 
 services:
   # ─── SERVICE 1: Next.js App ───────────────────────────────────────
@@ -40,8 +43,10 @@ services:
     envVars:
       # All values set in Render dashboard (batch paste from the list below).
       # sync: false = the value is NOT read from this file; it's a dashboard secret.
+      # DATABASE_URL MUST be the SAME Turso URL on both services (shared DB).
+      # Set in Render dashboard: libsql://<db>.turso.io?authToken=<token>
       - key: DATABASE_URL
-        value: file:./db/lellina.db
+        sync: false
       - key: NEXTAUTH_SECRET
         sync: false
       - key: NEXTAUTH_URL
@@ -114,10 +119,10 @@ services:
       # Set to the Next.js app's URL: https://lellina-dev.onrender.com
       - key: CHAT_ALLOWED_ORIGINS
         sync: false
-      # Database URL — must match the Next.js app's DB for shared data.
-      # On free plan, each service has its own ephemeral DB.
-      # Set TURSO_DATABASE_URL on BOTH services to share one DB.
+      # Database URL — MUST be the SAME Turso URL as the main app.
+      # This is how the two services share data (bro's architecture).
+      # Set in Render dashboard: libsql://<db>.turso.io?authToken=<token>
       - key: DATABASE_URL
-        value: file:./db/lellina.db
+        sync: false
       - key: NODE_ENV
         value: production
